@@ -83,6 +83,9 @@ a{color:var(--accent)}
       <h2>Airbnb calendar sync</h2>
       <div id="sync"></div>
       <button class="btn" style="margin-top:12px;width:100%" id="syncNow">Sync now</button>
+      <h2 style="margin-top:22px">Telegram alerts</h2>
+      <div class="sync" id="tgStatus"></div>
+      <button class="btn" style="margin-top:12px;width:100%" id="tgTest">Send test message</button>
     </section>
   </div>
 </main>
@@ -138,6 +141,21 @@ function render(){
     ${!l.airbnbConnected ? `<small>Not connected — add its Airbnb export link to the AIRBNB_ICAL settings</small>`
       : l.syncError ? `<small class="err">Last sync failed: ${esc(l.syncError)}</small>`
       : `<small>${l.airbnbBlocked.length} Airbnb bookings/blocks · synced ${l.syncedAt?ago(l.syncedAt):"—"}</small>`}</div>`).join("");
+  $("#tgStatus").innerHTML = {
+    connected: `<b>Connected</b><small>Every new request is posted to your Telegram group.</small>`,
+    "needs-chat": `<b>Bot connected — group not chosen yet</b><small>Add the bot to your hosts' group and send a message there, then click below.</small>
+      <button class="btn" style="margin-top:8px;width:100%" id="tgFind">Find my group</button><div id="tgChats"></div>`,
+    off: `<b>Not set up</b><small>Add TELEGRAM_BOT_TOKEN in Railway's Variables.</small>`,
+  }[data.telegram];
+  $("#tgTest").disabled = data.telegram !== "connected";
+  if($("#tgFind")) $("#tgFind").onclick = async () => {
+    try {
+      const r = await api("telegram-chats");
+      $("#tgChats").innerHTML = r.chats.length
+        ? r.chats.map(c => `<div class="sync"><b>${esc(c.title || "(no name)")}</b><small>${esc(c.type)} · TELEGRAM_CHAT_ID = <code>${esc(c.id)}</code></small></div>`).join("")
+        : `<small>No groups found yet. Add the bot to the group, send any message there (e.g. "hi"), then try again.</small>`;
+    } catch(e){ alert("Telegram: "+e.message); }
+  };
 }
 
 function card(b){
@@ -197,6 +215,7 @@ $("#bAdd").onclick = async () => {
   catch(e){ alert(e.message); }
 };
 $("#syncNow").onclick = async e => { e.target.disabled=true; try{ data = await api("sync",{}); render(); toast("Synced with Airbnb"); } catch(err){ alert(err.message); } e.target.disabled=false; };
+$("#tgTest").onclick = async e => { e.target.disabled=true; try{ await api("telegram-test",{}); toast("Test message sent to Telegram"); } catch(err){ alert("Telegram: "+err.message); } e.target.disabled=false; };
 $("#bStart").min = $("#bEnd").min = todayIso;
 
 load();

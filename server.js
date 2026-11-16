@@ -32,6 +32,69 @@ const icalEnv = id => process.env["AIRBNB_ICAL_" + id.toUpperCase().replace(/-/g
 for (const id of LISTING_IDS) CONFIG.listings[id].airbnbIcal = icalEnv(id) || CONFIG.listings[id].airbnbIcal || "";
 if (!ADMIN_USERS.size) console.warn("ADMIN_USERS is not set — the host dashboard is disabled.");
 
+/* ---------- Telegram alerts for new requests ----------
+   TELEGRAM_BOT_TOKEN  from @BotFather
+   TELEGRAM_CHAT_ID    the hosts' group (or a person) the bot posts to
+   PUBLIC_URL          optional; defaults to Railway's public domain, used for the dashboard link */
+const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
+const TG_CHAT = process.env.TELEGRAM_CHAT_ID || "";
+const PUBLIC_URL = process.env.PUBLIC_URL
+  || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : `http://localhost:${PORT}`);
+const tgEsc = s => String(s ?? "").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+async function telegram(html) {
+  if (!TG_TOKEN || !TG_CHAT) return { ok: false, error: "Telegram is not set up (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID)" };
+  try {
+    const r = await fetch(`${process.env.TELEGRAM_API || "https://api.telegram.org"}/bot${TG_TOKEN}/sendMessage`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: TG_CHAT, text: html, parse_mode: "HTML", disable_web_page_preview: true }),
+    });
+    const out = await r.json().catch(() => ({}));
+    if (!out.ok) console.error(`[telegram] failed: ${out.description || r.status}`);
+    return { ok: !!out.ok, error: out.ok ? null : (out.description || `HTTP ${r.status}`) };
+  } catch (e) {
+    console.error(`[telegram] failed: ${e.message}`);
+    return { ok: false, error: e.message };
+  }
+}
+
+// Lists the groups/chats the bot has seen recently, so hosts can find the TELEGRAM_CHAT_ID.
+async function telegramChats() {
+  if (!TG_TOKEN) return { ok: false, error: "Add TELEGRAM_BOT_TOKEN first" };
+  try {
+    const r = await fetch(`${process.env.TELEGRAM_API || "https://api.telegram.org"}/bot${TG_TOKEN}/getUpdates`);
+    const out = await r.json().catch(() => ({}));
+    if (!out.ok) return { ok: false, error: out.description || `HTTP ${r.status}` };
+    const chats = new Map();
+    for (const u of out.result || []) {
+      const c = (u.my_chat_member || u.message || u.channel_post || u.edited_message || {}).chat;
+      if (c) chats.set(c.id, { id: String(c.id), title: c.title || [c.first_name, c.last_name].filter(Boolean).join(" ") || c.username || "", type: c.type });
+    }
+    return { ok: true, chats: [...chats.values()] };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+function requestAlert(b) {
+  const name = CONFIG.listings[b.listing]?.name || b.listing;
+  const nights = Math.round((Date.parse(b.end) - Date.parse(b.start)) / 864e5);
+  const d = s => new Date(s + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  const flag = { sq: "🇦🇱 Shqip", de: "🇩🇪 Deutsch", en: "🇬🇧 English" }[b.lang] || "";
+  const wa = b.phone ? b.phone.replace(/\D/g, "").replace(/^00/, "").replace(/^0/, "383") : "";
+  return [
+    `🔔 <b>New booking request — ${tgEsc(name)}</b>`,
+    `📅 ${d(b.start)} → ${d(b.end)} (${nights} night${nights === 1 ? "" : "s"})`,
+    `👤 ${tgEsc(b.name)} · ${b.guests} guest${b.guests === 1 ? "" : "s"}${flag ? " · " + flag : ""}`,
+    b.phone ? `📞 ${tgEsc(b.phone)}${wa ? ` · <a href="https://wa.me/${wa}">WhatsApp</a>` : ""}` : null,
+    b.email ? `✉️ ${tgEsc(b.email)}` : null,
+    b.quotedTotal ? `💶 €${b.quotedTotal} quoted` : null,
+    b.message ? `💬 ${tgEsc(b.message)}` : null,
+    ``,
+    `👉 <a href="${PUBLIC_URL}/admin/">Accept or decline in the dashboard</a>`,
+  ].filter(l => l !== null).join("\n");
+}
+
 /* ---------- bookings made on this site ---------- */
 function loadBookings() {
   try { return JSON.parse(fs.readFileSync(BOOKINGS_FILE, "utf8")); } catch { return []; }
@@ -142,6 +205,7 @@ function createRequest(body) {
   };
   saveBookings([...loadBookings(), booking]);
   console.log(`[request] ${listing} ${start} → ${end} from ${name}`);
+  telegram(requestAlert(booking));   // don't make the guest wait for Telegram
   return [201, { ok: true, id: booking.id }];
 }
 
@@ -159,7 +223,7 @@ function adminUser(req) {
 
 function adminOverview(me) {
   return {
-    me,
+    me, telegram: TG_TOKEN && TG_CHAT ? "connected" : TG_TOKEN ? "needs-chat" : "off",
     listings: LISTING_IDS.map(id => ({
       id, name: CONFIG.listings[id].name || id,
       airbnbConnected: !!CONFIG.listings[id].airbnbIcal,
@@ -247,6 +311,11 @@ http.createServer((req, res) => {
       return readJson(req, body => send(res, ...setStatus(m[1], body?.status, me)));
     if (req.method === "POST" && url.pathname === "/admin/api/blocks")
       return readJson(req, body => body ? send(res, ...addBlock(body, me)) : send(res, 400, { error: "Bad request" }));
+    if (req.method === "GET" && url.pathname === "/admin/api/telegram-chats")
+      return telegramChats().then(r => send(res, r.ok ? 200 : 502, r));
+    if (req.method === "POST" && url.pathname === "/admin/api/telegram-test")
+      return telegram(`✅ Test from the Ferizaj Stays dashboard (sent by ${tgEsc(me)}). New booking requests will appear here.`)
+        .then(r => send(res, r.ok ? 200 : 502, r));
     if (req.method === "POST" && url.pathname === "/admin/api/sync")
       return syncAirbnb().then(() => send(res, 200, adminOverview(me)));
   }
