@@ -121,6 +121,7 @@ const PROPERTIES = [
 /* ===== Translations ===== */
 const T = {
   en: {
+    intro:"Three calm, carefully kept apartments, a short walk from the centre of Ferizaj — booked directly with your host, without platform fees.", seeApts:"See the apartments", viewApt:"View & book", ctaBtn:"Book your stay", where2:"Ferizaj · Kosovo",
     pageTitle: "Ferizaj Stays · Apartments in Ferizaj, Kosovo",
     metaDesc: "Book apartments in the heart of Ferizaj, Kosovo directly with a Superhost. No platform fees, reply within an hour.",
     aptTitle: (name, sub) => `${name} – ${sub} | Ferizaj Stays`,
@@ -152,6 +153,7 @@ const T = {
     n:{ night:["night","nights"], guest:["guest","guests"], bedroom:["bedroom","bedrooms"], bed:["bed","beds"], bath:["bath","baths"] },
   },
   sq: {
+    intro:"Tri apartamente të qeta dhe të mirëmbajtura me kujdes, pak hapa nga qendra e Ferizajt – të rezervuara direkt te mikpritësi, pa tarifa platformash.", seeApts:"Shikoni apartamentet", viewApt:"Shiko & rezervo", ctaBtn:"Rezervoni qëndrimin", where2:"Ferizaj · Kosovë",
     pageTitle: "Ferizaj Stays · Apartamente me qira ditore në Ferizaj",
     metaDesc: "Rezervoni apartamente në qendër të Ferizajt direkt te Superhost-i. Pa tarifa platformash, përgjigje brenda një ore.",
     aptTitle: (name, sub) => `${name} – ${sub} | Ferizaj Stays`,
@@ -183,6 +185,7 @@ const T = {
     n:{ night:["natë","netë"], guest:["mysafir","mysafirë"], bedroom:["dhomë gjumi","dhoma gjumi"], bed:["shtrat","shtretër"], bath:["banjo","banjo"] },
   },
   de: {
+    intro:"Drei ruhige, liebevoll gepflegte Wohnungen, nur wenige Schritte vom Zentrum von Ferizaj – direkt beim Gastgeber gebucht, ohne Plattformgebühren.", seeApts:"Wohnungen ansehen", viewApt:"Ansehen & buchen", ctaBtn:"Aufenthalt buchen", where2:"Ferizaj · Kosovo",
     pageTitle: "Ferizaj Stays · Ferienwohnungen in Ferizaj, Kosovo",
     metaDesc: "Ferienwohnungen im Zentrum von Ferizaj direkt beim Superhost buchen. Keine Plattformgebühren, Antwort innerhalb einer Stunde.",
     aptTitle: (name, sub) => `${name} – Ferienwohnung in Ferizaj: ${sub} | Ferizaj Stays`,
@@ -242,13 +245,13 @@ function make(lang) {
 
   const cardHTML = p => `
     <a class="card" href="${url(p)}" data-id="${p.id}">
-      <img class="img" src="${p.photos[0]}" alt="${esc(title(p))}" loading="lazy" width="1200" height="900">
+      <img class="img" src="${p.photos[0]}" alt="${esc(title(p))}" loading="lazy" width="1200" height="800">
       <div class="body">
-        <h3>${esc(title(p))}</h3>
-        <div class="meta">${t("type")} · ${facts(p)}</div>
+        <div class="eyebrow">${facts(p)}</div>
+        <h3>${esc(p.name)} <span>— ${esc(tr(p.subtitle))}</span></h3>
         <div class="row">
-          <span class="price"><b>€${p.price}</b> ${t("perNight")}</span>
-          <span class="rating">★ ${num(p.rating)} (${p.reviews})</span>
+          <span class="price"><b>€${p.price}</b> ${t("perNight")} · ★ ${num(p.rating)} (${p.reviews})</span>
+          <span class="more"><i></i>${t("viewApt")}</span>
         </div>
       </div>
     </a>`;

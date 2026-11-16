@@ -344,10 +344,11 @@ function renderPage(lang, p) {
     .replace(/(<a data-lang="(\w+)" lang="\w+" hreflang="\w+") href="[^"]*">/g,
       (_, open, l) => `${open} href="/${l}/${slug}"${l === lang ? ' class="on"' : ""}>`)
     .replace('<a class="back" id="back" href="/"', `<a class="back" id="back" href="/${lang}/"`)
-    .replace('<a class="logo" href="/">', `<a class="logo" href="/${lang}/">`);
+    .replace(/<a class="logo" href="\/">/g, `<a class="logo" href="/${lang}/">`);
   if (p) html = html
     // one main heading per page: on apartment pages that's the apartment's name
     .replace(/<h1 data-i18n="heroTitle">([^<]*)<\/h1>/, '<div class="hero-title" data-i18n="heroTitle">$1</div>')
+    .replace('<header id="top">', '<header id="top" class="solid">')
     .replace('<div class="overlay" id="detail">', '<div class="overlay open" id="detail">')
     .replace('<div class="wrap detail" id="detailBody"></div>', `<div class="wrap detail" id="detailBody">${H.detailHTML(p)}</div>`)
     .replace("<body>", '<body style="overflow:hidden">');
