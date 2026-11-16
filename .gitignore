@@ -1,0 +1,7 @@
+# secrets and guest data never leave this computer
+.env
+data/
+node_modules/
+
+# local app settings
+.claude/

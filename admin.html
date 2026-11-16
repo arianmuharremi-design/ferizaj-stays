@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Host Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf8f5;--surface:#fff;--ink:#1f1d1a;--muted:#6b665e;--line:#e7e2da;--accent:#b4532a;--accent-soft:#f6e7df;
+  --ok:#2f7a4f;--ok-soft:#e3f1e8;--warn:#9a6a00;--warn-soft:#fbf1d9;--bad:#a8322b;--bad-soft:#f8e2e0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+header{background:var(--surface);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+h1{font-family:Fraunces,serif;font-size:20px}
+h1 span{color:var(--accent)}
+h2{font-size:16px;margin-bottom:12px}
+a{color:var(--accent)}
+.tabs{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:14px}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.count{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:999px;background:var(--accent);color:#fff;font-size:12px;text-align:center}
+.tab.on .count{background:#fff;color:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.apt{font-size:13px;color:var(--muted)}
+.when{font-weight:600;font-size:17px}
+.pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.pending{background:var(--warn-soft);color:var(--warn)}
+.confirmed{background:var(--ok-soft);color:var(--ok)}
+.declined{background:var(--bad-soft);color:var(--bad)}
+.manual{background:#ecebe8;color:var(--muted)}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 16px;margin-top:10px;font-size:14px}
+.info span{color:var(--muted)}
+.msg{margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:14px;white-space:pre-wrap}
+.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-weight:500;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn.go{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.no{color:var(--bad)}
+.btn.wa{background:#25d366;border-color:#25d366;color:#fff}
+.btn:disabled{opacity:.5}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+.side{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0 48px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.panel label{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+.panel input,.panel select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:4px;background:var(--surface)}
+.dates2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sync{font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.sync:last-of-type{border:0}
+.sync small{display:block;color:var(--muted)}
+.sync .err{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;display:none}
+@media(max-width:700px){.side{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Ferizaj<span>Stays</span> · Host</h1>
+  <span style="font-size:14px"><span id="me" class="apt"></span> · <a href="/">View site →</a></span>
+</div></header>
+
+<main class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div id="list"></div>
+
+  <div class="side">
+    <section class="panel">
+      <h2>Block dates</h2>
+      <p class="apt">For your own use, repairs, or bookings from elsewhere. Blocks are sent to Airbnb too.</p>
+      <label>Apartment<select id="bListing"></select></label>
+      <div class="dates2">
+        <label>From<input type="date" id="bStart"></label>
+        <label>Until (checkout)<input type="date" id="bEnd"></label>
+      </div>
+      <label>Note<input id="bNote" placeholder="e.g. Painting, family visit" maxlength="100"></label>
+      <button class="btn go" style="margin-top:14px;width:100%" id="bAdd">Block these dates</button>
+    </section>
+    <section class="panel">
+      <h2>Airbnb calendar sync</h2>
+      <div id="sync"></div>
+      <button class="btn" style="margin-top:12px;width:100%" id="syncNow">Sync now</button>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const fmt = s => parse(s).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+const nights = b => Math.round((parse(b.end)-parse(b.start))/864e5);
+const todayIso = new Date().toLocaleDateString("sv-SE");
+const ago = iso => { const m = Math.round((Date.now()-new Date(iso))/6e4); return m<1?"just now":m<60?`${m} min ago`:m<1440?`${Math.round(m/60)} h ago`:`${Math.round(m/1440)} d ago`; };
+// Kosovo numbers: 044 123 456 → 38344123456
+const waNumber = p => { let d = String(p).replace(/\D/g,""); if(d.startsWith("00")) d=d.slice(2); else if(d.startsWith("0")) d="383"+d.slice(1); return d; };
+
+let data = { listings:[], bookings:[] }, tab = "pending";
+const nameOf = id => data.listings.find(l => l.id===id)?.name || id;
+
+const TABS = {
+  pending:  { label:"Requests", filter: b => b.status==="pending" },
+  upcoming: { label:"Upcoming", filter: b => b.status==="confirmed" && b.end >= todayIso },
+  past:     { label:"Past & declined", filter: b => b.status==="declined" || (b.status==="confirmed" && b.end < todayIso) },
+};
+
+async function api(path, body){
+  const r = await fetch(location.origin+"/admin/api/"+path, body ? {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)} : {});
+  const out = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error(out.error || `Error ${r.status}`);
+  return out;
+}
+function toast(t){ const el=$("#toast"); el.textContent=t; el.style.display="block"; clearTimeout(el._t); el._t=setTimeout(()=>el.style.display="none",2500); }
+
+async function load(){ data = await api("bookings"); render(); }
+
+const cap = s => s ? s[0].toUpperCase()+s.slice(1) : "";
+function render(){
+  $("#me").textContent = data.me ? `Signed in as ${cap(data.me)}` : "";
+  $("#tabs").innerHTML = Object.entries(TABS).map(([k,t]) => {
+    const n = data.bookings.filter(t.filter).length;
+    return `<button class="tab ${k===tab?"on":""}" data-tab="${k}">${t.label}${k==="pending"&&n?`<span class="count">${n}</span>`:` (${n})`}</button>`;
+  }).join("");
+  document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { tab=b.dataset.tab; render(); });
+
+  let list = data.bookings.filter(TABS[tab].filter);
+  if(tab==="past") list = list.reverse();
+  $("#list").innerHTML = list.length ? list.map(card).join("") :
+    `<div class="empty">${tab==="pending" ? "No requests waiting. 🎉" : "Nothing here yet."}</div>`;
+  document.querySelectorAll("[data-act]").forEach(b => b.onclick = () => act(b.dataset.id, b.dataset.act));
+
+  $("#bListing").innerHTML = data.listings.map(l => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join("");
+  $("#sync").innerHTML = data.listings.map(l => `<div class="sync"><b>${esc(l.name)}</b>
+    ${!l.airbnbConnected ? `<small>Not connected — add its Airbnb export link to the AIRBNB_ICAL settings</small>`
+      : l.syncError ? `<small class="err">Last sync failed: ${esc(l.syncError)}</small>`
+      : `<small>${l.airbnbBlocked.length} Airbnb bookings/blocks · synced ${l.syncedAt?ago(l.syncedAt):"—"}</small>`}</div>`).join("");
+}
+
+function card(b){
+  const n = nights(b), manual = b.source==="manual";
+  const pill = manual ? `<span class="pill manual">Blocked</span>` : `<span class="pill ${b.status}">${b.status[0].toUpperCase()+b.status.slice(1)}</span>`;
+  const wa = b.phone ? waNumber(b.phone) : "";
+  const first = b.name.split(" ")[0], apt = nameOf(b.listing);
+  const SQM = ["janar","shkurt","mars","prill","maj","qershor","korrik","gusht","shtator","tetor","nëntor","dhjetor"];
+  const gd = s => b.lang==="sq" ? `${parse(s).getDate()} ${SQM[parse(s).getMonth()]}` : parse(s).toLocaleDateString(b.lang==="de"?"de-DE":"en-GB",{weekday:"short",day:"numeric",month:"short"});
+  const when = `${gd(b.start)} → ${gd(b.end)}`;
+  const confirmText = encodeURIComponent({
+    sq: `Përshëndetje ${first}, rezervimi juaj në ${apt} është konfirmuar: ${when} (${n} ${n>1?"netë":"natë"}). Adresën dhe detajet e hyrjes do t'jua dërgoj para mbërritjes. — Ariani, Ferizaj Stays`,
+    de: `Hallo ${first}, Ihre Buchung in ${apt} ist bestätigt: ${when} (${n} ${n>1?"Nächte":"Nacht"}). Die Adresse und Check-in-Infos schicke ich Ihnen vor Ihrer Anreise. — Arian, Ferizaj Stays`,
+  }[b.lang] || `Hi ${first}, your booking at ${apt} is confirmed: ${when} (${n} night${n>1?"s":""}). I'll send the address and check-in details before you arrive. — Arian, Ferizaj Stays`);
+  const langName = {sq:"Shqip",de:"Deutsch",en:"English"}[b.lang];
+  const contact = manual ? "" : `
+    <div class="info">
+      <div><span>Guest</span><br>${esc(b.name)} · ${b.guests} guest${b.guests>1?"s":""}${langName?` · <span>${langName}</span>`:""}</div>
+      ${b.phone?`<div><span>Phone</span><br><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>`:""}
+      ${b.email?`<div><span>Email</span><br><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></div>`:""}
+      <div><span>Quoted total</span><br>${b.quotedTotal?`€${esc(b.quotedTotal)}`:"—"} <span>(check price)</span></div>
+    </div>${b.message?`<div class="msg">${esc(b.message)}</div>`:""}`;
+  let actions = "";
+  if(b.status==="pending") actions = `
+    <button class="btn go" data-act="confirmed" data-id="${b.id}">Accept</button>
+    <button class="btn no" data-act="declined" data-id="${b.id}">Decline</button>
+    ${wa?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${wa}">WhatsApp guest</a>`:""}`;
+  else if(b.status==="confirmed" && b.end>=todayIso) actions = `
+    ${wa&&!manual?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${confirmText}">Send confirmation on WhatsApp</a>`:""}
+    ${!wa&&b.email&&!manual?`<a class="btn" href="mailto:${esc(b.email)}?subject=${encodeURIComponent("Your booking is confirmed")}&body=${confirmText}">Email confirmation</a>`:""}
+    <button class="btn no" data-act="declined" data-id="${b.id}">${manual?"Remove block":"Cancel booking"}</button>`;
+  else if(b.status==="declined" && b.end>=todayIso && !manual) actions = `<button class="btn" data-act="pending" data-id="${b.id}">Reopen</button>`;
+  return `<article class="card">
+    <div class="top"><div><div class="apt">${esc(nameOf(b.listing))}</div>
+      <div class="when">${fmt(b.start)} → ${fmt(b.end)} <span class="apt">· ${n} night${n>1?"s":""}</span></div>
+      ${manual?`<div class="apt">${esc(b.name)}</div>`:""}
+      ${b.updatedBy?`<div class="apt">${manual?"Blocked":b.status==="confirmed"?"Accepted":b.status==="declined"?"Declined":"Reopened"} by ${esc(cap(b.updatedBy))}</div>`:""}</div>${pill}</div>
+    ${contact}<div class="actions">${actions}</div></article>`;
+}
+
+async function act(id, status){
+  const b = data.bookings.find(x => x.id===id);
+  const q = { declined: b.source==="manual" ? "Remove this block? The dates become bookable again."
+              : b.status==="confirmed" ? `Cancel ${b.name}'s booking? The dates become bookable again. Remember to tell the guest.`
+              : `Decline ${b.name}'s request? The dates become bookable again.` }[status];
+  if(q && !confirm(q)) return;
+  try { await api("bookings/"+id, {status}); await load();
+    toast(status==="confirmed" ? "Accepted — now send the guest a confirmation" : status==="declined" ? "Done — dates are free again" : "Request reopened");
+    if(status==="confirmed"){ tab="upcoming"; render(); }
+  } catch(e){ alert(e.message); }
+}
+
+$("#bAdd").onclick = async () => {
+  const body = { listing:$("#bListing").value, start:$("#bStart").value, end:$("#bEnd").value, note:$("#bNote").value };
+  if(!body.start || !body.end) return alert("Pick both dates.");
+  try { await api("blocks", body); $("#bStart").value=$("#bEnd").value=$("#bNote").value=""; await load(); tab="upcoming"; render(); toast("Dates blocked"); }
+  catch(e){ alert(e.message); }
+};
+$("#syncNow").onclick = async e => { e.target.disabled=true; try{ data = await api("sync",{}); render(); toast("Synced with Airbnb"); } catch(err){ alert(err.message); } e.target.disabled=false; };
+$("#bStart").min = $("#bEnd").min = todayIso;
+
+load();
+setInterval(load, 60000);   // pick up new requests every minute
+</script>
+</body>
+</html>
