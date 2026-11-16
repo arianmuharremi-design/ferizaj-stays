@@ -271,17 +271,131 @@ function readJson(req, cb) {
   req.on("end", () => { let body; try { body = JSON.parse(raw); } catch { body = null; } cb(body); });
 }
 
+/* ---------- pages for Google: one per language and apartment ---------- */
+const SHARED = require("./shared.js");
+const OG_LOCALE = { sq: "sq_AL", de: "de_DE", en: "en_GB" };
+const clipText = (s, n) => s.length <= n ? s : s.slice(0, s.lastIndexOf(" ", n - 1)) + "…";
+const jsonLd = o => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`;
+
+// language for "/": a choice the visitor made before, else their browser's languages, else English
+function preferredLang(req) {
+  const c = (req.headers.cookie || "").match(/(?:^|;\s*)lang=(sq|de|en)/);
+  if (c) return c[1];
+  for (const part of String(req.headers["accept-language"] || "").split(",")) {
+    const l = part.trim().slice(0, 2).toLowerCase();
+    if (SHARED.LANGS.includes(l)) return l;
+  }
+  return "en";
+}
+
+function renderPage(lang, p) {
+  const { esc, T, LANGS, PROPERTIES } = SHARED;
+  const H = SHARED.make(lang);
+  const slug = p ? p.slug : "";
+  const pageUrl = `${PUBLIC_URL}/${lang}/${slug}`;
+  const title = p ? T[lang].aptTitle(p.name, H.tr(p.subtitle)) : H.t("pageTitle");
+  const desc = p ? clipText(H.tr(p.description)[0], 158) : H.t("metaDesc");
+  const image = (p || PROPERTIES[0]).photos[0];
+  const prices = PROPERTIES.map(x => x.price);
+  const business = {
+    "@type": "LodgingBusiness", name: "Ferizaj Stays", url: `${PUBLIC_URL}/${lang}/`,
+    telephone: "+383 49 947 897", priceRange: `€${Math.min(...prices)}–€${Math.max(...prices)}`,
+    image: PROPERTIES.map(x => x.photos[0]),
+    address: { "@type": "PostalAddress", addressLocality: "Ferizaj", addressCountry: "XK" },
+    knowsLanguage: ["sq", "de", "en"],
+  };
+  const apartment = x => ({
+    "@type": "Apartment", name: H.title(x), url: `${PUBLIC_URL}/${lang}/${x.slug}`,
+    description: H.tr(x.description).join(" "), image: x.photos,
+    numberOfRooms: x.bedrooms + 1, numberOfBedrooms: x.bedrooms, numberOfBathroomsTotal: x.baths,
+    occupancy: { "@type": "QuantitativeValue", maxValue: x.guests },
+    amenityFeature: x.amenities.map(a => ({ "@type": "LocationFeatureSpecification", name: H.tr(SHARED.A[a]), value: true })),
+    address: business.address,
+  });
+  const structured = p
+    ? { "@context": "https://schema.org", ...apartment(p), containedInPlace: business }
+    : { "@context": "https://schema.org", ...business, containsPlace: PROPERTIES.map(apartment) };
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(desc)}">`,
+    `<link rel="canonical" href="${pageUrl}">`,
+    ...LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${PUBLIC_URL}/${l}/${slug}">`),
+    `<link rel="alternate" hreflang="x-default" href="${p ? `${PUBLIC_URL}/en/${slug}` : `${PUBLIC_URL}/`}">`,
+    `<meta property="og:type" content="website">`,
+    `<meta property="og:site_name" content="Ferizaj Stays">`,
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:description" content="${esc(desc)}">`,
+    `<meta property="og:url" content="${pageUrl}">`,
+    `<meta property="og:image" content="${image}">`,
+    `<meta property="og:locale" content="${OG_LOCALE[lang]}">`,
+    ...LANGS.filter(l => l !== lang).map(l => `<meta property="og:locale:alternate" content="${OG_LOCALE[l]}">`),
+    `<meta name="twitter:card" content="summary_large_image">`,
+    process.env.GOOGLE_SITE_VERIFICATION ? `<meta name="google-site-verification" content="${esc(process.env.GOOGLE_SITE_VERIFICATION)}">` : "",
+    jsonLd(structured),
+  ].filter(Boolean).join("\n");
+
+  let html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8")
+    .replace(/<!--SEO:START-->[\s\S]*?<!--SEO:END-->/, head)
+    .replace(/<html lang="\w+">/, `<html lang="${lang}">`)
+    // page text in the right language, so it is readable without JavaScript
+    .replace(/(data-i18n="(\w+)"[^>]*>)[^<]*</g, (_, open, key) => `${open}${esc(H.t(key))}<`)
+    .replace('<div class="grid" id="grid"></div>', `<div class="grid" id="grid">${PROPERTIES.map(H.cardHTML).join("")}</div>`)
+    .replace(/(<a data-lang="(\w+)" lang="\w+" hreflang="\w+") href="[^"]*">/g,
+      (_, open, l) => `${open} href="/${l}/${slug}"${l === lang ? ' class="on"' : ""}>`)
+    .replace('<a class="back" id="back" href="/"', `<a class="back" id="back" href="/${lang}/"`)
+    .replace('<a class="logo" href="/">', `<a class="logo" href="/${lang}/">`);
+  if (p) html = html
+    // one main heading per page: on apartment pages that's the apartment's name
+    .replace(/<h1 data-i18n="heroTitle">([^<]*)<\/h1>/, '<div class="hero-title" data-i18n="heroTitle">$1</div>')
+    .replace('<div class="overlay" id="detail">', '<div class="overlay open" id="detail">')
+    .replace('<div class="wrap detail" id="detailBody"></div>', `<div class="wrap detail" id="detailBody">${H.detailHTML(p)}</div>`)
+    .replace("<body>", '<body style="overflow:hidden">');
+  return html;
+}
+
+function sitemap() {
+  const { LANGS, PROPERTIES } = SHARED;
+  const pages = ["", ...PROPERTIES.map(p => p.slug)];
+  const urls = pages.flatMap(slug => LANGS.map(lang => [
+    `<url><loc>${PUBLIC_URL}/${lang}/${slug}</loc>`,
+    ...LANGS.map(l => `<xhtml:link rel="alternate" hreflang="${l}" href="${PUBLIC_URL}/${l}/${slug}"/>`),
+    `<changefreq>weekly</changefreq><priority>${slug ? "0.8" : "1.0"}</priority></url>`,
+  ].join("")));
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join("\n")}\n</urlset>\n`;
+}
+
 /* ---------- http ---------- */
-function send(res, status, body, type = "application/json; charset=utf-8") {
-  res.writeHead(status, { "Content-Type": type, "Cache-Control": "no-store" });
+function send(res, status, body, type = "application/json; charset=utf-8", headers = {}) {
+  res.writeHead(status, { "Content-Type": type, "Cache-Control": "no-store", ...headers });
   res.end(typeof body === "string" ? body : JSON.stringify(body));
 }
+const redirect = (res, status, to, headers = {}) => { res.writeHead(status, { Location: to, ...headers }); res.end(); };
+const HTML = "text/html; charset=utf-8";
+const PAGE_CACHE = { "Cache-Control": "public, max-age=300" };
 
 http.createServer((req, res) => {
   const url = new URL(req.url, "http://x");
   let m;
-  if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html"))
-    return send(res, 200, fs.readFileSync(path.join(ROOT, "index.html"), "utf8"), "text/html; charset=utf-8");
+  if (req.method === "GET" || req.method === "HEAD") {
+    // "/" sends visitors to their language; old ?lang= links keep working
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      const q = url.searchParams.get("lang");
+      if (SHARED.LANGS.includes(q)) return redirect(res, 301, `/${q}/`);
+      return redirect(res, 302, `/${preferredLang(req)}/`, { Vary: "Accept-Language, Cookie", "Cache-Control": "no-store" });
+    }
+    if ((m = url.pathname.match(/^\/(sq|de|en)$/))) return redirect(res, 301, `/${m[1]}/`);
+    if ((m = url.pathname.match(/^\/(sq|de|en)\/$/))) return send(res, 200, renderPage(m[1]), HTML, PAGE_CACHE);
+    if ((m = url.pathname.match(/^\/(sq|de|en)\/([\w-]+)\/?$/))) {
+      const p = SHARED.bySlug(m[2]);
+      if (p) return url.pathname.endsWith("/") ? redirect(res, 301, `/${m[1]}/${p.slug}`) : send(res, 200, renderPage(m[1], p), HTML, PAGE_CACHE);
+    }
+    if (url.pathname === "/shared.js")
+      return send(res, 200, fs.readFileSync(path.join(ROOT, "shared.js"), "utf8"), "text/javascript; charset=utf-8", PAGE_CACHE);
+    if (url.pathname === "/sitemap.xml") return send(res, 200, sitemap(), "application/xml; charset=utf-8", PAGE_CACHE);
+    if (url.pathname === "/robots.txt")
+      return send(res, 200, `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${PUBLIC_URL}/sitemap.xml\n`, "text/plain; charset=utf-8", PAGE_CACHE);
+  }
 
   if (req.method === "GET" && (m = url.pathname.match(/^\/api\/availability\/([\w-]+)$/))) {
     if (!LISTING_IDS.includes(m[1])) return send(res, 404, { error: "Unknown apartment" });
