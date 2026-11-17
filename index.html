@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%23b4532a%22/%3E%3Cpath d=%22M8 16l8-7 8 7v8h-5v-5h-6v5H8z%22 fill=%22%23fff%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="preload" as="image" href="/photos/arch-point/01.jpg">
 <style>
@@ -16,15 +16,15 @@
   --bg:#ffffff; --soft:#f6f4f1; --surface:#fff; --ink:#151413; --muted:#6f6a63; --line:#e9e5df;
   --accent:#b4532a; --accent-ink:#fff; --accent-soft:#f6e7df; --ok:#2f7a4f;
   --radius:4px; --shadow:0 1px 2px rgba(0,0,0,.05),0 10px 30px rgba(0,0,0,.08);
-  --sans:"Inter Tight",Inter,system-ui,sans-serif; --serif:"Playfair Display",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif; --serif:"DM Serif Display",Georgia,serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
 img{display:block;max-width:100%}
 button{font:inherit;cursor:pointer}
 .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-h1,h2,h3{font-family:var(--sans);font-weight:600;line-height:1.1;letter-spacing:-.02em}
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.1;letter-spacing:-.005em}
 section{scroll-margin-top:72px}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
@@ -38,7 +38,7 @@ section{scroll-margin-top:72px}
 /* header: see-through over the photo, white once you scroll */
 header{position:fixed;top:0;left:0;right:0;z-index:60;transition:background .25s,border-color .25s;border-bottom:1px solid transparent}
 header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:none;padding:0 28px}
-.logo{font-family:var(--serif);font-size:24px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:-.01em}
+.logo{font-family:var(--serif);font-size:25px;font-weight:400;color:#fff;text-decoration:none;letter-spacing:-.01em}
 .logo span{color:#f0a37f}
 nav a{color:rgba(255,255,255,.85);text-decoration:none;margin-left:24px;font-size:15px;font-weight:500}
 nav a:hover{color:#fff}
@@ -64,7 +64,7 @@ header.solid .langs a.on{background:var(--ink);color:#fff}
 .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.3) 35%,rgba(0,0,0,.72) 100%)}
 .hero-inner{position:relative;z-index:1;padding-bottom:12vh;width:100%}
 .hero .eyebrow{color:rgba(255,255,255,.85)}
-.hero h1,.hero-title{font-family:var(--sans);font-weight:600;line-height:1.02;letter-spacing:-.035em;font-size:clamp(44px,8vw,104px);max-width:980px;margin-top:14px}
+.hero h1,.hero-title{font-family:var(--serif);font-weight:400;line-height:1.04;letter-spacing:-.01em;font-size:clamp(44px,8vw,104px);max-width:980px;margin-top:14px}
 .hero p{font-size:clamp(17px,1.6vw,20px);max-width:620px;margin-top:20px;color:rgba(255,255,255,.9)}
 .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
 .badge{border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:6px 14px;font-size:14px;backdrop-filter:blur(6px);background:rgba(255,255,255,.08)}
@@ -79,6 +79,7 @@ header.solid .langs a.on{background:var(--ink);color:#fff}
 .sbtn:hover{background:var(--ink)}
 .hero .search + .pill{margin-top:22px}
 .searchinfo{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--soft);border-radius:12px;padding:14px 18px;margin:-24px 0 32px;font-weight:600}
+.searchinfo[hidden],.pkg[hidden]{display:none}
 .searchinfo button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:14px}
 .avail{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px}
 .avail.ok{background:#e3f1e8;color:#2f7a4f}
@@ -103,7 +104,7 @@ header.solid .langs a.on{background:var(--ink);color:#fff}
 
 /* big statement + photo collage */
 .intro{padding:140px 0 120px}
-.statement{font-family:var(--serif);font-weight:800;font-size:clamp(28px,3.6vw,46px);line-height:1.18;letter-spacing:-.015em;text-align:center;max-width:900px;margin:0 auto}
+.statement{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.6vw,46px);line-height:1.18;letter-spacing:-.015em;text-align:center;max-width:900px;margin:0 auto}
 .collage{position:relative;margin:100px auto 0;max-width:1000px;padding-left:12%}
 .collage .big{width:100%;aspect-ratio:16/10;object-fit:cover}
 .collage .small{position:absolute;left:0;bottom:-60px;width:34%;aspect-ratio:4/5;object-fit:cover;border:10px solid #fff;box-shadow:var(--shadow)}
@@ -150,7 +151,7 @@ header.solid .langs a.on{background:var(--ink);color:#fff}
 .about{display:grid;grid-template-columns:1.1fr 1fr;gap:72px;align-items:center}
 .about p{color:var(--muted);margin-top:16px;font-size:17px}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:40px 32px}
-.fact b{display:block;font-family:var(--serif);font-weight:800;font-size:clamp(44px,5vw,64px);line-height:1}
+.fact b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(44px,5vw,64px);line-height:1}
 .fact span{display:block;color:var(--muted);font-size:14px;margin-top:8px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
 
 /* guide teaser + guide page */
