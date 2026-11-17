@@ -33,6 +33,7 @@ const PROPERTIES = [
   {
     id: "centre-one-bedroom",   // internal id (calendar links, bookings) — don't change
     slug: "arch-point",
+    building: { floor: 4, floors: 12, year: 2020, lifts: 2, bigLifts: true, parking: "garage", stepFree: true, ac: "living" },
     lat: 42.371094, lng: 21.153847,   // map position (from Google Maps)
     name: "Arch Point",
     subtitle: { en:"one-bedroom in the heart of Ferizaj", sq:"apartament me një dhomë gjumi në zemër të Ferizajt", de:"Wohnung mit Schlafzimmer im Herzen von Ferizaj" },
@@ -61,6 +62,7 @@ const PROPERTIES = [
   {
     id: "cozy-two-bedroom",
     slug: "intercon",
+    building: { floor: 12, floors: 14, lifts: 2, parking: "front", ac: "yes", cot: true },
     whereText: { en:"Quiet residential area on the west side of Ferizaj, about a 15-minute walk (3 minutes by car) to the city centre and The Village shopping centre.", sq:"Zonë e qetë banimi në pjesën perëndimore të Ferizajt, rreth 15 minuta në këmbë (3 minuta me makinë) deri në qendër të qytetit dhe në qendrën tregtare Village.", de:"Ruhiges Wohngebiet im Westen von Ferizaj, ca. 15 Gehminuten (3 Minuten mit dem Auto) bis zum Stadtzentrum und zum Einkaufszentrum Village." },
     lat: 42.371465, lng: 21.139560,   // map position (from Google Maps)
     name: "Intercon",
@@ -91,6 +93,7 @@ const PROPERTIES = [
   {
     id: "modern-one-bedroom",
     slug: "dream-palace",
+    building: { floor: 3, floors: 13, lifts: 2, parking: "front", ac: "yes" },
     whereText: { en:"Quiet residential area on the west side of Ferizaj, about a 15-minute walk (3 minutes by car) to the city centre and The Village shopping centre.", sq:"Zonë e qetë banimi në pjesën perëndimore të Ferizajt, rreth 15 minuta në këmbë (3 minuta me makinë) deri në qendër të qytetit dhe në qendrën tregtare Village.", de:"Ruhiges Wohngebiet im Westen von Ferizaj, ca. 15 Gehminuten (3 Minuten mit dem Auto) bis zum Stadtzentrum und zum Einkaufszentrum Village." },
     lat: 42.370497, lng: 21.137826,   // map position (from Google Maps)
     name: "Dream Palace",
@@ -125,6 +128,13 @@ const PROPERTIES = [
 /* ===== Translations ===== */
 const T = {
   en: {
+    bTitle:"The building", rTitle:"House rules",
+    bFloor:(f, of, y) => `${(n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ({1:"st",2:"nd",3:"rd"}[n % 10] || "th")))(f)} floor of ${of}${y ? ` · modern building from ${y}` : ""}`,
+    bLifts:(n, big) => `${n} lifts${big ? ", room for prams and large suitcases" : ""}`,
+    bGarage:"Free parking in the basement garage, reserved for guests (fits our 9-seat van)", bFront:"Free parking in front of the building",
+    bStepFree:"No steps at the entrance or inside", bAcLiving:"Air conditioning in the living room (also heats in winter)", bAc:"Air conditioning",
+    rules:["Personal welcome: we meet you on arrival", "Check-in from 15:00 · check-out by 11:00", "Smoking on the balcony only", "No pets", "No baby cot or high chair available"], cotYes:"Baby cot available on request",
+    tag:(f, garage) => `${(n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ({1:"st",2:"nd",3:"rd"}[n % 10] || "th")))(f)} floor · lift · ${garage ? "free garage parking" : "free parking"}`,
     navGuide:"Things to do", guideTeaser:"Things to do in Ferizaj & around", guideTeaserText:"Mosque and church side by side, the Kaçanik Gorge, Brezovica, Prizren and more — our tips for your stay.", guideBtn:"See our tips", mapBtn:"Map", backHome:"← Apartments", guideCta:"Find your apartment",
     payTitle:"Payment & cancellation", payList:["No payment when you send a request.", "After we confirm, you pay a 30% deposit by bank transfer or Western Union — we send the details on WhatsApp.", "The rest (70%) is paid on arrival, in cash or by transfer.", "Cancellation (firm): full refund of the deposit up to 30 days before check-in, 50% between 30 and 7 days before, no refund in the last 7 days."],
     allPhotos:"Show all photos", close:"Close",
@@ -161,6 +171,13 @@ const T = {
     n:{ night:["night","nights"], guest:["guest","guests"], bedroom:["bedroom","bedrooms"], bed:["bed","beds"], bath:["bath","baths"] },
   },
   sq: {
+    bTitle:"Ndërtesa", rTitle:"Rregullat e shtëpisë",
+    bFloor:(f, of, y) => `Kati ${f} nga ${of}${y ? ` · ndërtesë moderne e vitit ${y}` : ""}`,
+    bLifts:(n, big) => `${n} ashensorë${big ? ", me vend për karroca fëmijësh dhe valixhe të mëdha" : ""}`,
+    bGarage:"Parking falas në garazhin nëntokësor, i rezervuar për mysafirët (i përshtatshëm edhe për furgonin tonë me 9 ulëse)", bFront:"Parking falas para ndërtesës",
+    bStepFree:"Pa shkallë në hyrje apo brenda", bAcLiving:"Klimë në dhomën e ndenjes (ngroh edhe në dimër)", bAc:"Klimë",
+    rules:["Pritje personale: ju presim kur mbërrini", "Hyrja nga ora 15:00 · dalja deri në ora 11:00", "Duhani lejohet vetëm në ballkon", "Nuk lejohen kafshët shtëpiake", "Nuk ofrojmë krevat bebeje apo karrige për fëmijë"], cotYes:"Krevat bebeje në dispozicion sipas kërkesës",
+    tag:(f, garage) => `Kati ${f} · ashensor · ${garage ? "parking falas në garazh" : "parking falas"}`,
     navGuide:"Çfarë të bëni", guideTeaser:"Çfarë të bëni në Ferizaj dhe rrethinë", guideTeaserText:"Xhamia dhe kisha krah për krah, Gryka e Kaçanikut, Brezovica, Prizreni e më shumë – këshillat tona për qëndrimin tuaj.", guideBtn:"Shikoni këshillat", mapBtn:"Harta", backHome:"← Apartamentet", guideCta:"Gjeni apartamentin tuaj",
     payTitle:"Pagesa & anulimi", payList:["Asnjë pagesë kur dërgoni kërkesën.", "Pas konfirmimit paguani 30% kapar me transfer bankar ose Western Union – detajet jua dërgojmë në WhatsApp.", "Pjesa tjetër (70%) paguhet në mbërritje, me para në dorë ose me transfer.", "Anulimi: kapari kthehet plotësisht deri 30 ditë para hyrjes, 50% nga 30 deri 7 ditë para, pa kthim në 7 ditët e fundit."],
     allPhotos:"Shiko të gjitha fotot", close:"Mbyll",
@@ -197,6 +214,13 @@ const T = {
     n:{ night:["natë","netë"], guest:["mysafir","mysafirë"], bedroom:["dhomë gjumi","dhoma gjumi"], bed:["shtrat","shtretër"], bath:["banjo","banjo"] },
   },
   de: {
+    bTitle:"Das Gebäude", rTitle:"Hausregeln",
+    bFloor:(f, of, y) => `${f}. Stock von ${of}${y ? ` · modernes Gebäude von ${y}` : ""}`,
+    bLifts:(n, big) => `${n} Aufzüge${big ? ", Platz für Kinderwagen und große Koffer" : ""}`,
+    bGarage:"Kostenloser Parkplatz in der Tiefgarage, reserviert für Gäste (passt auch für unseren 9-Sitzer)", bFront:"Kostenloses Parken vor dem Gebäude",
+    bStepFree:"Keine Stufen am Eingang oder in der Wohnung", bAcLiving:"Klimaanlage im Wohnzimmer (heizt auch im Winter)", bAc:"Klimaanlage",
+    rules:["Persönlicher Empfang: Wir begrüßen Sie bei der Ankunft", "Check-in ab 15:00 · Check-out bis 11:00", "Rauchen nur auf dem Balkon", "Keine Haustiere", "Kein Babybett oder Hochstuhl vorhanden"], cotYes:"Babybett auf Anfrage verfügbar",
+    tag:(f, garage) => `${f}. Stock · Aufzug · ${garage ? "kostenlose Tiefgarage" : "kostenloser Parkplatz"}`,
     navGuide:"Ausflugstipps", guideTeaser:"Ausflugstipps: Ferizaj & Umgebung", guideTeaserText:"Moschee und Kirche Seite an Seite, die Kaçanik-Schlucht, Brezovica, Prizren und mehr – unsere Tipps für Ihren Aufenthalt.", guideBtn:"Zu den Tipps", mapBtn:"Karte", backHome:"← Wohnungen", guideCta:"Wohnung finden",
     payTitle:"Zahlung & Stornierung", payList:["Bei der Anfrage zahlen Sie nichts.", "Nach unserer Bestätigung zahlen Sie 30 % an – per Banküberweisung oder Western Union. Die Daten schicken wir Ihnen per WhatsApp.", "Der Rest (70 %) wird bei Ankunft bezahlt, bar oder per Überweisung.", "Stornierung: volle Rückerstattung der Anzahlung bis 30 Tage vor Anreise, 50 % zwischen 30 und 7 Tagen vorher, danach keine Rückerstattung."],
     allPhotos:"Alle Fotos anzeigen", close:"Schließen",
@@ -493,6 +517,7 @@ function make(lang) {
       <div class="body">
         <div class="eyebrow">${facts(p)}</div>
         <h3>${esc(p.name)} <span>— ${esc(tr(p.subtitle))}</span></h3>
+        ${p.building ? `<div class="btag">${T[lang].tag(p.building.floor, p.building.parking === "garage")}</div>` : ""}
         <div class="row">
           <span class="price"><b>€${p.price}</b> ${t("perNight")} · ★ ${num(p.rating)} (${p.reviews})<em class="savetag">${t("cardSave")}</em></span>
           <span class="more"><i></i>${t("viewApt")}</span>
@@ -517,6 +542,15 @@ function make(lang) {
         <div class="block"><h2>★ ${num(p.rating)} · ${p.reviews} ${t("reviews")}</h2><div class="scores">
           ${Object.entries(p.scores).map(([k,v]) => `<div><b>${num(v,1,1)}</b>${T[lang].scores[k]}</div>`).join("")}
         </div></div>
+        ${p.building ? (() => { const b = p.building, L = T[lang]; const rows = [
+            ["🏢", L.bFloor(b.floor, b.floors, b.year)],
+            b.lifts ? ["🛗", L.bLifts(b.lifts, b.bigLifts)] : null,
+            ["🅿️", b.parking === "garage" ? L.bGarage : L.bFront],
+            b.stepFree ? ["♿", L.bStepFree] : null,
+            b.ac ? ["❄️", b.ac === "living" ? L.bAcLiving : L.bAc] : null,
+          ].filter(Boolean);
+          return `<div class="block"><h2>${L.bTitle}</h2><ul class="infolist">${rows.map(([i, x]) => `<li><span aria-hidden="true">${i}</span>${x}</li>`).join("")}</ul></div>`; })() : ""}
+        <div class="block"><h2>${t("rTitle")}</h2><ul class="infolist">${T[lang].rules.map((x, i) => `<li><span aria-hidden="true">${["🔑","🕒","🚭","🐾","👶"][i]}</span>${i === 4 && p.building && p.building.cot ? T[lang].cotYes : x}</li>`).join("")}</ul></div>
         <div class="block"><h2>${t("payTitle")}</h2><ul class="paylist">${T[lang].payList.map(x => `<li>${x}</li>`).join("")}</ul></div>
         <div class="block" style="border:0"><h2>${t("where")}</h2><p>${p.whereText ? tr(p.whereText) : t("whereText")}</p>${MAPS_ON ? `
           <div class="aptmap" id="aptMap" role="region" aria-label="${t("where")}"></div><div class="maphint"><a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}" target="_blank" rel="noopener">${t("gmaps")} ↗</a> · ${t("approxLoc")}</div>` : ""}</div>

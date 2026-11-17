@@ -325,13 +325,14 @@ function renderPage(lang, p, page = "home") {
     telephone: "+383 49 947 897", priceRange: `€${Math.min(...prices)}–€${Math.max(...prices)}`,
     image: PROPERTIES.map(x => abs(x.photos[0])),
     address: { "@type": "PostalAddress", addressLocality: "Ferizaj", addressCountry: "XK" },
-    knowsLanguage: ["sq", "de", "en"],
+    knowsLanguage: ["sq", "de", "en"], checkinTime: "15:00", checkoutTime: "11:00", petsAllowed: false,
   };
   const apartment = x => ({
     "@type": "Apartment", name: H.title(x), url: `${PUBLIC_URL}/${lang}/${x.slug}`,
     description: H.tr(x.description).join(" "), image: x.photos.map(abs),
     numberOfRooms: x.bedrooms + 1, numberOfBedrooms: x.bedrooms, numberOfBathroomsTotal: x.baths,
-    occupancy: { "@type": "QuantitativeValue", maxValue: x.guests },
+    occupancy: { "@type": "QuantitativeValue", maxValue: x.guests }, petsAllowed: false,
+    ...(x.building ? { floorLevel: String(x.building.floor) } : {}),
     amenityFeature: x.amenities.map(a => ({ "@type": "LocationFeatureSpecification", name: H.tr(SHARED.A[a]), value: true })),
     address: business.address,
   });
