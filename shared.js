@@ -69,7 +69,8 @@ const PROPERTIES = [
     price: 40,  // € per night
     rating: 4.8, reviews: 5,
     airbnb: "https://www.airbnb.com/rooms/1677017208208577053",
-    photos: localPhotos("intercon", 19),     // own photos (resized copies in /photos/intercon)
+    // own photos (resized copies in /photos/intercon); the numbers set the order, the first is the main photo
+    photos: [6, 2, 3, 4, 5, 1, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].map(n => `/photos/intercon/${String(n).padStart(2, "0")}.jpg`),
     description: {
       en: ["A modern two-bedroom apartment in Ferizaj, about a 15-minute walk (3 minutes by car) from the city centre and The Village Shopping & Fun.",
            "A master bedroom, a second bedroom with two single beds, a cozy living room, a fully equipped kitchen, fast Wi-Fi and a modern bathroom. Ideal for families, friends travelling together and business guests."],
@@ -99,8 +100,8 @@ const PROPERTIES = [
     rating: 4.84, reviews: 25,
     airbnb: "https://www.airbnb.com/rooms/955832812626776693",
     photos: [
-      "7ab3647e-80ad-40bc-96eb-91b0d6be149d","6fe9747f-ef61-436e-a868-622674e455b5",
-      "0785d269-3212-413b-ac20-fb6e6fa7121d","26e5a9cd-2dd6-4864-ba97-7719414990d1",
+      "0785d269-3212-413b-ac20-fb6e6fa7121d","7ab3647e-80ad-40bc-96eb-91b0d6be149d",
+      "6fe9747f-ef61-436e-a868-622674e455b5","26e5a9cd-2dd6-4864-ba97-7719414990d1",
       "ae6912a9-777a-454b-b5bb-58f7b7250936"
     ].map(id => `https://a0.muscache.com/im/pictures/miso/Hosting-955832812626776693/original/${id}.jpeg?im_w=1200`),
     description: {
@@ -237,7 +238,7 @@ const T = {
 const GUIDE = {
   slug: "things-to-do",
   // top photo; null = no photo. Licence requires the credit line.
-  photo: { src: "/photos/guide/01.jpg", author: "ErzaRudi", licence: "CC BY-SA 4.0", licenceUrl: "https://creativecommons.org/licenses/by-sa/4.0/", source: "https://commons.wikimedia.org/wiki/File:Xhami_dhe_Kish%C3%AB_Orthodokse.jpg" },
+  photo: { src: "/photos/arch-point/01.jpg" },   // own photo; for a licensed photo add author, licence, licenceUrl, source (shown as credit)
   title: { en:"Things to do in Ferizaj & around", sq:"Çfarë të bëni në Ferizaj dhe rrethinë", de:"Ausflugstipps: Ferizaj & Umgebung" },
   lead: {
     en:"Our favourite places in town, in the mountains nearby and for day trips — tips from your hosts. Driving times are approximate.",
@@ -417,8 +418,8 @@ function make(lang) {
 
   const guideHTML = () => `
     <section class="guide-hero${GUIDE.photo ? " has-photo" : ""}">${GUIDE.photo ? `
-      <img class="gh-img" src="${GUIDE.photo.src}" srcset="${small(GUIDE.photo.src)} 800w, ${GUIDE.photo.src} 1600w" sizes="100vw" alt="${esc(tr(GUIDE.sections[0].items[0].name))}" fetchpriority="high">
-      <div class="gh-credit">Photo: <a href="${GUIDE.photo.source}" target="_blank" rel="noopener">${GUIDE.photo.author}</a>, <a href="${GUIDE.photo.licenceUrl}" target="_blank" rel="noopener license">${GUIDE.photo.licence}</a>, Wikimedia Commons</div>` : ""}
+      <img class="gh-img" src="${GUIDE.photo.src}" srcset="${small(GUIDE.photo.src)} 800w, ${GUIDE.photo.src} 1600w" sizes="100vw" alt="${GUIDE.photo.alt || "Arch Point"}" fetchpriority="high">
+      ${GUIDE.photo.author ? `<div class="gh-credit">Photo: <a href="${GUIDE.photo.source}" target="_blank" rel="noopener">${GUIDE.photo.author}</a>, <a href="${GUIDE.photo.licenceUrl}" target="_blank" rel="noopener license">${GUIDE.photo.licence}</a>, Wikimedia Commons</div>` : ""}` : ""}
       <div class="wrap">
       <a class="back" href="/${lang}/">${t("backHome")}</a>
       <div class="eyebrow" style="margin-top:28px">${t("where2")}</div>
