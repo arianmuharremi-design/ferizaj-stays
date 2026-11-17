@@ -5,3 +5,7 @@ node_modules/
 
 # local app settings
 .claude/
+
+# original photos and their ZIPs (only the resized web copies get uploaded)
+photos-source/
+*.zip

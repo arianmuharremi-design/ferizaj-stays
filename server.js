@@ -275,6 +275,7 @@ function readJson(req, cb) {
 const SHARED = require("./shared.js");
 const OG_LOCALE = { sq: "sq_AL", de: "de_DE", en: "en_GB" };
 const clipText = (s, n) => s.length <= n ? s : s.slice(0, s.lastIndexOf(" ", n - 1)) + "…";
+const abs = u => u.startsWith("/") ? PUBLIC_URL + u : u;   // photos on our own site need the full address
 const jsonLd = o => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`;
 
 // language for "/": a choice the visitor made before, else their browser's languages, else English
@@ -295,18 +296,18 @@ function renderPage(lang, p) {
   const pageUrl = `${PUBLIC_URL}/${lang}/${slug}`;
   const title = p ? T[lang].aptTitle(p.name, H.tr(p.subtitle)) : H.t("pageTitle");
   const desc = p ? clipText(H.tr(p.description)[0], 158) : H.t("metaDesc");
-  const image = (p || PROPERTIES[0]).photos[0];
+  const image = abs((p || PROPERTIES[0]).photos[0]);
   const prices = PROPERTIES.map(x => x.price);
   const business = {
     "@type": "LodgingBusiness", name: "Ferizaj Stays", url: `${PUBLIC_URL}/${lang}/`,
     telephone: "+383 49 947 897", priceRange: `€${Math.min(...prices)}–€${Math.max(...prices)}`,
-    image: PROPERTIES.map(x => x.photos[0]),
+    image: PROPERTIES.map(x => abs(x.photos[0])),
     address: { "@type": "PostalAddress", addressLocality: "Ferizaj", addressCountry: "XK" },
     knowsLanguage: ["sq", "de", "en"],
   };
   const apartment = x => ({
     "@type": "Apartment", name: H.title(x), url: `${PUBLIC_URL}/${lang}/${x.slug}`,
-    description: H.tr(x.description).join(" "), image: x.photos,
+    description: H.tr(x.description).join(" "), image: x.photos.map(abs),
     numberOfRooms: x.bedrooms + 1, numberOfBedrooms: x.bedrooms, numberOfBathroomsTotal: x.baths,
     occupancy: { "@type": "QuantitativeValue", maxValue: x.guests },
     amenityFeature: x.amenities.map(a => ({ "@type": "LocationFeatureSpecification", name: H.tr(SHARED.A[a]), value: true })),
@@ -340,6 +341,9 @@ function renderPage(lang, p) {
     .replace(/<html lang="\w+">/, `<html lang="${lang}">`)
     // page text in the right language, so it is readable without JavaScript
     .replace(/(data-i18n="(\w+)"[^>]*>)[^<]*</g, (_, open, key) => `${open}${esc(H.t(key))}<`)
+    // maps stay hidden until the real apartment locations are in (MAPS_ON in shared.js)
+    .replace(/\n\s*<div class="mapcol">.*<\/div><\/div>/, m => SHARED.MAPS_ON ? m : "")
+    .replace('<div class="split">', SHARED.MAPS_ON ? '<div class="split">' : '<div class="split nomap">')
     .replace('<div class="grid" id="grid"></div>', `<div class="grid" id="grid">${PROPERTIES.map(H.cardHTML).join("")}</div>`)
     .replace(/(<a data-lang="(\w+)" lang="\w+" hreflang="\w+") href="[^"]*">/g,
       (_, open, l) => `${open} href="/${l}/${slug}"${l === lang ? ' class="on"' : ""}>`)
@@ -390,6 +394,14 @@ http.createServer((req, res) => {
     if ((m = url.pathname.match(/^\/(sq|de|en)\/([\w-]+)\/?$/))) {
       const p = SHARED.bySlug(m[2]);
       if (p) return url.pathname.endsWith("/") ? redirect(res, 301, `/${m[1]}/${p.slug}`) : send(res, 200, renderPage(m[1], p), HTML, PAGE_CACHE);
+    }
+    // our own photos (resized copies), cached by browsers for 30 days
+    if ((m = url.pathname.match(/^\/photos\/([a-z-]+)\/(\d{2}(?:-sm)?\.jpg)$/))) {
+      const file = path.join(ROOT, "photos", m[1], m[2]);
+      if (fs.existsSync(file)) {
+        res.writeHead(200, { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=2592000" });
+        return fs.createReadStream(file).pipe(res);
+      }
     }
     if (url.pathname === "/shared.js")
       return send(res, 200, fs.readFileSync(path.join(ROOT, "shared.js"), "utf8"), "text/javascript; charset=utf-8", PAGE_CACHE);

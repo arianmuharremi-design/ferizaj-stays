@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="https://a0.muscache.com/im/pictures/miso/Hosting-555045357724911595/original/5ef15470-034a-4b7d-a43a-746feb1db686.png?im_w=1440">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="preload" as="image" href="/photos/intercon/01.jpg">
 <style>
 :root{
   --bg:#ffffff; --soft:#f6f4f1; --surface:#fff; --ink:#151413; --muted:#6f6a63; --line:#e9e5df;
@@ -172,6 +173,7 @@ footer a{color:#fff}
 .breakdown{margin-top:16px;font-size:15px}
 .breakdown div{display:flex;justify-content:space-between;padding:4px 0}
 .breakdown .total{border-top:1px solid var(--line);margin-top:8px;padding-top:12px;font-weight:600}
+.breakdown .sub{color:var(--muted);font-size:14px;padding:2px 0}
 .fine{font-size:13px;color:var(--muted);text-align:center;margin-top:10px}
 
 /* request form */
@@ -184,7 +186,49 @@ footer a{color:#fff}
 .done p{color:var(--muted);font-size:15px}
 .wa{background:#25d366;color:#fff;text-decoration:none;display:block;border-radius:999px;padding:13px;font-weight:600;margin-top:14px}
 
+
+/* maps (Airbnb-style price pins) */
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px;align-items:start}
+.split.nomap{grid-template-columns:1fr}
+.split.nomap .grid{gap:80px}
+.split.nomap .card .img{aspect-ratio:16/8}
+.split .grid{gap:64px}
+.split .card .img{aspect-ratio:16/10}
+.mapcol{position:sticky;top:88px}
+.homemap{height:calc(100vh - 120px);min-height:420px;max-height:760px;border-radius:14px;overflow:hidden;background:#e9e6e1}
+.aptmap{height:380px;border-radius:14px;overflow:hidden;margin-top:18px;background:#e9e6e1}
+.maphint{font-size:13px;color:var(--muted);margin-top:8px}
+.pin{position:absolute;transform:translate(-50%,-50%);background:#fff;color:var(--ink);border-radius:999px;padding:6px 11px;font:700 14px/1 var(--sans);box-shadow:0 1px 2px rgba(0,0,0,.1),0 4px 12px rgba(0,0,0,.18);white-space:nowrap;cursor:pointer;transition:transform .15s,background .15s,color .15s}
+.pin:hover,.pin.on{background:var(--ink);color:#fff;transform:translate(-50%,-50%) scale(1.08);z-index:1000}
+.leaflet-container{font:inherit}
+.gallery{position:relative}
+.gallery img{cursor:zoom-in}
+.allbtn{position:absolute;right:14px;bottom:14px;background:#fff;border:1px solid var(--ink);border-radius:8px;padding:8px 14px;font-weight:600;font-size:14px}
+.photos-all{position:fixed;inset:0;z-index:100;background:#fff;overflow-y:auto;display:none}
+.photos-all.open{display:block}
+.pa-top{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;height:60px;padding:0 20px;z-index:2}
+.pa-close{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-weight:600}
+.pa-grid{max-width:900px;margin:24px auto 60px;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pa-grid img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;background:#eee}
+.pa-grid img:nth-child(3n+1){grid-column:span 2}
+.leaflet-popup-content-wrapper{border-radius:14px;padding:0;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.22)}
+.leaflet-popup-content{margin:0;width:250px!important}
+.leaflet-popup-tip-container{display:none}
+.mini{display:block;color:inherit;text-decoration:none}
+.mini img{width:100%;height:150px;object-fit:cover}
+.mini div{padding:10px 14px 14px}
+.mini b{display:block;font-family:var(--sans);font-size:15px}
+.mini span{color:var(--muted);font-size:13px}
+.card.hl .img{outline:3px solid var(--ink);outline-offset:-3px}
+.housepin{position:absolute;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:var(--accent);display:grid;place-items:center;box-shadow:0 0 0 8px rgba(180,83,42,.22),0 4px 12px rgba(0,0,0,.25)}
+.housepin svg{width:22px;height:22px;fill:#fff}
+.maphint a{color:var(--ink);font-weight:600}
+
 @media (max-width:860px){
+  .split{grid-template-columns:1fr;gap:28px}
+  .mapcol{position:static;order:-1}
+  .homemap{height:340px;min-height:0}
+  .aptmap{height:300px}
   header .wrap{padding:0 16px}
   nav{display:none}
   .phone span{display:none}
@@ -222,7 +266,7 @@ footer a{color:#fff}
 </div></header>
 
 <section class="hero" id="hero">
-  <img class="hero-img" src="https://a0.muscache.com/im/pictures/miso/Hosting-555045357724911595/original/5ef15470-034a-4b7d-a43a-746feb1db686.png?im_w=1440" alt="" fetchpriority="high">
+  <img class="hero-img" src="/photos/intercon/01.jpg" alt="" fetchpriority="high">
   <div class="hero-inner wrap">
     <div class="eyebrow" data-i18n="where2">Ferizaj · Kosovo</div>
     <h1 data-i18n="heroTitle">Your home in the heart of Ferizaj</h1>
@@ -239,8 +283,8 @@ footer a{color:#fff}
 <section class="intro"><div class="wrap">
   <p class="statement" data-i18n="intro">Three calm, carefully kept apartments, a short walk from the centre of Ferizaj — booked directly with your host, without platform fees.</p>
   <div class="collage">
-    <img class="big" src="https://a0.muscache.com/im/pictures/miso/Hosting-955832812626776693/original/7ab3647e-80ad-40bc-96eb-91b0d6be149d.jpeg?im_w=1200" alt="Dream Palace" loading="lazy">
-    <img class="small" src="https://a0.muscache.com/im/pictures/hosting/Hosting-1677017208208577053/original/919b6904-46f4-4a85-82ea-044cb357017e.jpeg?im_w=720" alt="Intercon" loading="lazy">
+    <img class="big" src="/photos/arch-point/01.jpg" alt="Arch Point" loading="lazy">
+    <img class="small" src="/photos/intercon/03-sm.jpg" alt="Intercon" loading="lazy">
   </div>
 </div></section>
 
@@ -248,7 +292,10 @@ footer a{color:#fff}
   <div class="section-head">
     <div><div class="eyebrow" data-i18n="where2">Ferizaj · Kosovo</div><h2 class="section-title" data-i18n="ourApts">Our apartments</h2></div>
   </div>
-  <div class="grid" id="grid"></div>
+  <div class="split">
+    <div class="grid" id="grid"></div>
+    <div class="mapcol"><div class="homemap" id="homeMap" role="region" aria-label="Map"></div></div>
+  </div>
 </div></section>
 
 <section id="about"><div class="wrap about">
@@ -267,7 +314,7 @@ footer a{color:#fff}
 </div></section>
 
 <section class="cta">
-  <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1677017208208577053/original/0d426798-5da1-4d06-b7fc-dd49262e6210.jpeg?im_w=1440" alt="" loading="lazy">
+  <img src="/photos/intercon/07.jpg" alt="" loading="lazy">
   <a class="boxbtn" href="#stays" data-i18n="ctaBtn">Book your stay</a>
 </section>
 
@@ -277,12 +324,19 @@ footer a{color:#fff}
   <span>© 2026 Ferizaj Stays · Ferizaj, Kosovo</span>
 </div></footer>
 
+<!-- all photos of an apartment -->
+<div class="photos-all" id="photosAll" role="dialog" aria-modal="true" aria-label="Photos">
+  <div class="pa-top"><button class="pa-close" id="paClose" type="button">✕ <span data-i18n="close">Close</span></button><b id="paTitle"></b></div>
+  <div class="pa-grid" id="paGrid"></div>
+</div>
+
 <!-- apartment page -->
 <div class="overlay" id="detail">
   <div class="detail-top"><div class="wrap"><a class="back" id="back" href="/" data-i18n="back">← All apartments</a></div></div>
   <div class="wrap detail" id="detailBody"></div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="/shared.js"></script>
 <script>
 /* Booking widget and navigation. Data, translations and templates live in /shared.js */
@@ -360,6 +414,7 @@ function renderGrid(){
     if(e.metaKey || e.ctrlKey || e.shiftKey) return;   // let "open in new tab" work
     e.preventDefault(); openDetail(c.dataset.id, true);
   });
+  bindCardHover();
 }
 
 function closeDetail(push){
@@ -405,6 +460,9 @@ function renderDetail(){
   $("#gPlus").onclick = () => { state.guests++; renderSummary(); };
   $("#reserve").onclick = () => { state.formOpen = true; $("#form").classList.add("open"); $("#reserve").style.display="none"; $("#fName").focus(); };
   $("#send").onclick = sendRequest;
+  requestAnimationFrame(initAptMap);   // after the apartment view is visible, so the map knows its size
+  $("#allPhotos")?.addEventListener("click", () => openPhotos(0));
+  document.querySelectorAll(".gallery img[data-photo]").forEach(img => img.onclick = () => openPhotos(+img.dataset.photo));
 }
 
 function rangeFree(a,b){ for(let d=new Date(a); d<b; d.setDate(d.getDate()+1)) if(state.bookedSet.has(iso(d))) return false; return true; }
@@ -454,7 +512,9 @@ function renderSummary(){
       <div><span>€${p.price} × ${pl(n,"night")}</span><span>€${sub}</span></div>
       ${CLEANING_FEE ? `<div><span>${t("cleaning")}</span><span>€${CLEANING_FEE}</span></div>` : ""}
       <div><span>${t("service")}</span><span>€0</span></div>
-      <div class="total"><span>${t("total")}</span><span>€${state.total}</span></div>`;
+      <div class="total"><span>${t("total")}</span><span>€${state.total}</span></div>
+      <div class="sub"><span>${t("deposit")} (${S.DEPOSIT_PCT}%)</span><span>€${Math.round(state.total * S.DEPOSIT_PCT / 100)}</span></div>
+      <div class="sub"><span>${t("onArrival")}</span><span>€${state.total - Math.round(state.total * S.DEPOSIT_PCT / 100)}</span></div>`;
     r.disabled=false; r.textContent=t("requestBook");
   } else { $("#breakdown").innerHTML=""; r.disabled=true; r.textContent=t("selectDates"); }
 }
@@ -495,6 +555,67 @@ function showDone(){
     <a class="wa" target="_blank" rel="noopener" href="https://wa.me/${HOST_WHATSAPP}?text=${encodeURIComponent(msg)}">${t("waBtn")}</a>`;
 }
 
+/* ===== All photos ===== */
+function openPhotos(start){
+  const p = state.p;
+  $("#paTitle").textContent = p.name;
+  $("#paGrid").innerHTML = p.photos.map((u,i) => `<img src="${u}" alt="${esc(p.name)} – ${t("photo")} ${i+1}" loading="lazy" id="pa${i}">`).join("");
+  $("#photosAll").classList.add("open");
+  requestAnimationFrame(() => document.getElementById("pa" + start)?.scrollIntoView({ block: "center" }));
+}
+function closePhotos(){ $("#photosAll").classList.remove("open"); }
+$("#paClose").onclick = closePhotos;
+addEventListener("keydown", e => { if(e.key === "Escape") closePhotos(); });
+
+/* ===== Maps (OpenStreetMap via Leaflet) ===== */
+const TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const ATTRIB = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+let homeMap, pins = {}, aptMap;
+
+function miniCard(p){
+  return `<a class="mini" href="${H.url(p)}" data-id="${p.id}">
+    <img src="${S.small(p.photos[0])}" alt="${esc(title(p))}">
+    <div><b>${esc(p.name)}</b><span>${esc(tr(p.subtitle))}</span><br><span><b style="display:inline;color:var(--ink)">€${p.price}</b> ${t("perNight")} · ★ ${num(p.rating)}</span></div></a>`;
+}
+function highlight(id, on){
+  pins[id]?.getElement()?.querySelector(".pin")?.classList.toggle("on", on);
+  document.querySelector(`.card[data-id="${id}"]`)?.classList.toggle("hl", on);
+}
+function initHomeMap(){
+  if(!window.L || !$("#homeMap") || homeMap) return;
+  homeMap = L.map("homeMap", { scrollWheelZoom: true, zoomControl: true });
+  L.tileLayer(TILES, { maxZoom: 19, attribution: ATTRIB }).addTo(homeMap);
+  for(const p of PROPERTIES){
+    const icon = L.divIcon({ className: "", html: `<div class="pin">€${p.price}</div>`, iconSize: [0,0] });
+    pins[p.id] = L.marker([p.lat, p.lng], { icon, title: p.name, riseOnHover: true }).addTo(homeMap)
+      .bindPopup(() => miniCard(p), { offset: [0, -14], minWidth: 250, maxWidth: 250 })
+      .on("mouseover", () => highlight(p.id, true)).on("mouseout", () => highlight(p.id, false));
+  }
+  homeMap.fitBounds(L.latLngBounds(PROPERTIES.map(p => [p.lat, p.lng])), { padding: [60, 60], maxZoom: 16 });
+  // clicking the mini card opens the apartment like the list does
+  homeMap.on("popupopen", e => {
+    const a = e.popup.getElement().querySelector(".mini");
+    a.onclick = ev => { if(ev.metaKey || ev.ctrlKey) return; ev.preventDefault(); homeMap.closePopup(); openDetail(a.dataset.id, true); };
+  });
+}
+function bindCardHover(){
+  document.querySelectorAll(".card[data-id]").forEach(c => {
+    c.onmouseenter = () => highlight(c.dataset.id, true);
+    c.onmouseleave = () => highlight(c.dataset.id, false);
+  });
+}
+// apartment page: a pin on the exact spot
+const HOUSE_PIN = `<div class="housepin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5z"/></svg></div>`;
+function initAptMap(){
+  if(aptMap){ aptMap.remove(); aptMap = null; }
+  const el = $("#aptMap");
+  if(!window.L || !el || !state) return;
+  const p = state.p;
+  aptMap = L.map(el, { scrollWheelZoom: true }).setView([p.lat, p.lng], 16);
+  L.tileLayer(TILES, { maxZoom: 19, attribution: ATTRIB }).addTo(aptMap);
+  L.marker([p.lat, p.lng], { icon: L.divIcon({ className: "", html: HOUSE_PIN, iconSize: [0,0] }), title: p.name }).addTo(aptMap);
+}
+
 /* ===== Start: show the page the address points to ===== */
 function route(){
   const m = location.pathname.match(/^\/(sq|de|en)\/([\w-]+)\/?$/);
@@ -509,6 +630,7 @@ function route(){
 // the server already sent the page in the right language; just wire it up
 document.documentElement.lang = lang;
 renderGrid();
+initHomeMap();
 route();   // opens the apartment the address points to, if any
 if(!$("#detail").classList.contains("open")) syncPage();
 </script>

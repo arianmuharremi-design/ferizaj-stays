@@ -166,10 +166,11 @@ function card(b){
   const SQM = ["janar","shkurt","mars","prill","maj","qershor","korrik","gusht","shtator","tetor","nëntor","dhjetor"];
   const gd = s => b.lang==="sq" ? `${parse(s).getDate()} ${SQM[parse(s).getMonth()]}` : parse(s).toLocaleDateString(b.lang==="de"?"de-DE":"en-GB",{weekday:"short",day:"numeric",month:"short"});
   const when = `${gd(b.start)} → ${gd(b.end)}`;
+  const DEPOSIT_PCT = 30, dep = b.quotedTotal ? Math.round(b.quotedTotal * DEPOSIT_PCT / 100) : null;
   const confirmText = encodeURIComponent({
-    sq: `Përshëndetje ${first}, rezervimi juaj në ${apt} është konfirmuar: ${when} (${n} ${n>1?"netë":"natë"}). Adresën dhe detajet e hyrjes do t'jua dërgoj para mbërritjes. — Ariani, Ferizaj Stays`,
-    de: `Hallo ${first}, Ihre Buchung in ${apt} ist bestätigt: ${when} (${n} ${n>1?"Nächte":"Nacht"}). Die Adresse und Check-in-Infos schicke ich Ihnen vor Ihrer Anreise. — Arian, Ferizaj Stays`,
-  }[b.lang] || `Hi ${first}, your booking at ${apt} is confirmed: ${when} (${n} night${n>1?"s":""}). I'll send the address and check-in details before you arrive. — Arian, Ferizaj Stays`);
+    sq: `Përshëndetje ${first}, rezervimi juaj në ${apt} është konfirmuar: ${when} (${n} ${n>1?"netë":"natë"}).${dep?` Për ta siguruar, ju lutem paguani kaparin prej €${dep} (${DEPOSIT_PCT}%); detajet e pagesës po jua dërgoj këtu.`:""} Adresën dhe detajet e hyrjes do t'jua dërgoj para mbërritjes. — Ariani, Ferizaj Stays`,
+    de: `Hallo ${first}, Ihre Buchung in ${apt} ist bestätigt: ${when} (${n} ${n>1?"Nächte":"Nacht"}).${dep?` Bitte zahlen Sie zur Sicherung eine Anzahlung von €${dep} (${DEPOSIT_PCT} %); die Zahlungsdaten schicke ich Ihnen hier.`:""} Die Adresse und Check-in-Infos schicke ich Ihnen vor Ihrer Anreise. — Arian, Ferizaj Stays`,
+  }[b.lang] || `Hi ${first}, your booking at ${apt} is confirmed: ${when} (${n} night${n>1?"s":""}).${dep?` To secure it, please pay a deposit of €${dep} (${DEPOSIT_PCT}%); I'll send you the payment details here.`:""} I'll send the address and check-in details before you arrive. — Arian, Ferizaj Stays`);
   const langName = {sq:"Shqip",de:"Deutsch",en:"English"}[b.lang];
   const contact = manual ? "" : `
     <div class="info">
@@ -177,6 +178,7 @@ function card(b){
       ${b.phone?`<div><span>Phone</span><br><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>`:""}
       ${b.email?`<div><span>Email</span><br><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></div>`:""}
       <div><span>Quoted total</span><br>${b.quotedTotal?`€${esc(b.quotedTotal)}`:"—"} <span>(check price)</span></div>
+      ${dep?`<div><span>Deposit (${DEPOSIT_PCT}%)</span><br>€${dep} <span>· rest €${b.quotedTotal-dep} on arrival</span></div>`:""}
     </div>${b.message?`<div class="msg">${esc(b.message)}</div>`:""}`;
   let actions = "";
   if(b.status==="pending") actions = `

@@ -3,7 +3,9 @@
    Edit prices, photos and text here. */
 (function (root) {
 
+const MAPS_ON = true;                   // maps on the home page and apartment pages
 const HOST_WHATSAPP = "38349947897";    // +383 49 947 897 — digits only, with country code
+const DEPOSIT_PCT = 30;                 // % of the total paid after the host confirms; the rest on arrival
 const CLEANING_FEE = 0;                 // € per stay (0 = no cleaning fee)
 
 /* Amenity names in all three languages */
@@ -23,21 +25,22 @@ const A = {
   coAlarm:   { en:"Carbon monoxide alarm", sq:"Alarm për monoksid karboni", de:"Kohlenmonoxidmelder" },
 };
 
+const localPhotos = (slug, n) => Array.from({ length: n }, (_, i) => `/photos/${slug}/${String(i + 1).padStart(2, "0")}.jpg`);
+// small (800px) copy of our own photos; Airbnb-hosted photos have no small copy
+const small = u => u.startsWith("/photos/") ? u.replace(/.jpg$/, "-sm.jpg") : u;
+
 const PROPERTIES = [
   {
     id: "centre-one-bedroom",   // internal id (calendar links, bookings) — don't change
-    slug: "arch-point",         // web address: /sq/arch-point, /de/arch-point, /en/arch-point
+    slug: "arch-point",
+    lat: 42.371094, lng: 21.153847,   // map position (from Google Maps)
     name: "Arch Point",
     subtitle: { en:"one-bedroom in the heart of Ferizaj", sq:"apartament me një dhomë gjumi në zemër të Ferizajt", de:"Wohnung mit Schlafzimmer im Herzen von Ferizaj" },
     guests: 3, bedrooms: 1, beds: 2, baths: 1,
     price: 35,  // € per night
     rating: 4.88, reviews: 78, guestFavorite: true,
     airbnb: "https://www.airbnb.com/rooms/555045357724911595",
-    photos: [
-      "5ef15470-034a-4b7d-a43a-746feb1db686","42580a5e-0e85-41fb-9f35-d6952eea5a23",
-      "9a154cd5-a8c9-482d-bb28-4b1091ece7a8","c59c6d43-6b01-49dc-85dc-c8c12d3f6c18",
-      "e4f0694c-cf3c-49b2-a686-420033399533","ad2e108d-90f7-448f-a730-d107c397e7a0"
-    ].map(id => `https://a0.muscache.com/im/pictures/miso/Hosting-555045357724911595/original/${id}.png?im_w=1200`),
+    photos: localPhotos("arch-point", 18),   // own photos (resized copies in /photos/arch-point)
     description: {
       en: ["A recently renovated one-bedroom apartment right in the city centre, just a few minutes' walk from the city square and the Village shopping centre, on a quiet street.",
            "A spacious living room opens onto a fully equipped modern kitchen, with a dining and work area. The bedroom has a large double bed, the living room a sofa bed, and the bathroom a walk-in shower. Heating and fast Wi-Fi throughout."],
@@ -58,17 +61,14 @@ const PROPERTIES = [
   {
     id: "cozy-two-bedroom",
     slug: "intercon",
+    lat: 42.371465, lng: 21.139560,   // map position (from Google Maps)
     name: "Intercon",
     subtitle: { en:"cozy 2-bedroom apartment", sq:"apartament i rehatshëm me dy dhoma gjumi", de:"gemütliche Wohnung mit zwei Schlafzimmern" },
     guests: 5, bedrooms: 2, beds: 3, baths: 1,
     price: 40,  // € per night
     rating: 4.8, reviews: 5,
     airbnb: "https://www.airbnb.com/rooms/1677017208208577053",
-    photos: [
-      "0d426798-5da1-4d06-b7fc-dd49262e6210","919b6904-46f4-4a85-82ea-044cb357017e",
-      "5b68b138-e73f-4f4f-a282-c55339c3b3bf","e4ad9c39-a6c1-4554-a0cb-788a7a49f063",
-      "27dd1019-2e24-4d34-9f7f-c415894afb37","255962b2-b272-4025-98f7-32ab87543e43"
-    ].map(id => `https://a0.muscache.com/im/pictures/hosting/Hosting-1677017208208577053/original/${id}.jpeg?im_w=1200`),
+    photos: localPhotos("intercon", 19),     // own photos (resized copies in /photos/intercon)
     description: {
       en: ["A modern two-bedroom apartment in central Ferizaj, about a 5-minute walk from the city centre and The Village Shopping & Fun, with shops, cafés and restaurants close by.",
            "A master bedroom, a second bedroom with two single beds, a cozy living room, a fully equipped kitchen, fast Wi-Fi and a modern bathroom. Ideal for families, friends travelling together and business guests."],
@@ -89,6 +89,7 @@ const PROPERTIES = [
   {
     id: "modern-one-bedroom",
     slug: "dream-palace",
+    lat: 42.370497, lng: 21.137826,   // map position (from Google Maps)
     name: "Dream Palace",
     subtitle: { en:"modern 1-bedroom with balcony", sq:"apartament modern me një dhomë gjumi dhe ballkon", de:"moderne Wohnung mit Schlafzimmer und Balkon" },
     guests: 3, bedrooms: 1, beds: 2, baths: 1,
@@ -121,6 +122,8 @@ const PROPERTIES = [
 /* ===== Translations ===== */
 const T = {
   en: {
+    allPhotos:"Show all photos", close:"Close",
+    mapTitle:"Where the apartments are", approxLoc:"Check-in details are sent after booking.", gmaps:"Open in Google Maps", mapLink:"View apartment",
     intro:"Three calm, carefully kept apartments, a short walk from the centre of Ferizaj — booked directly with your host, without platform fees.", seeApts:"See the apartments", viewApt:"View & book", ctaBtn:"Book your stay", where2:"Ferizaj · Kosovo",
     pageTitle: "Ferizaj Stays · Apartments in Ferizaj, Kosovo",
     metaDesc: "Book apartments in the heart of Ferizaj, Kosovo directly with a Superhost. No platform fees, reply within an hour.",
@@ -136,11 +139,11 @@ const T = {
     phone:"WhatsApp / phone", back:"← All apartments", photo:"photo",
     type:"Entire apartment", hostedBy:"hosted by Arian", reviews:"reviews", guestFav:"Guest favourite",
     sleep:"Where you'll sleep", offers:"What this place offers", where:"Where you'll be",
-    whereText:"Quiet neighbourhood, about a 5-minute walk to the city centre and the Village shopping centre. Exact address shared after booking.",
+    whereText:"Quiet neighbourhood, about a 5-minute walk to the city centre and the Village shopping centre.",
     perNight:"/ night", checkin:"Check-in", checkout:"Checkout", addDate:"Add date", guestsLbl:"Guests", max:"Max",
     selectDates:"Select dates", requestBook:"Request to book",
     fName:"Full name", fPhone:"Phone / WhatsApp", fEmail:"Email", fMsg:"Arrival time, questions… (optional)",
-    send:"Send booking request", sending:"Sending…", fine:"You won't be charged yet",
+    send:"Send booking request", sending:"Sending…", fine:"Nothing to pay now. After we confirm, you pay a 30% deposit; the rest on arrival.", deposit:"Deposit after confirmation", onArrival:"On arrival",
     pickIn:"Choose your check-in date", pickOut:"Choose your checkout date", taken:"crossed-out dates are taken",
     cleaning:"Cleaning fee", service:"Service fee", total:"Total",
     errMissing:"Please add your name and a phone number or email.",
@@ -153,6 +156,8 @@ const T = {
     n:{ night:["night","nights"], guest:["guest","guests"], bedroom:["bedroom","bedrooms"], bed:["bed","beds"], bath:["bath","baths"] },
   },
   sq: {
+    allPhotos:"Shiko të gjitha fotot", close:"Mbyll",
+    mapTitle:"Ku ndodhen apartamentet", approxLoc:"Detajet e hyrjes ju dërgohen pas rezervimit.", gmaps:"Hape në Google Maps", mapLink:"Shiko apartamentin",
     intro:"Tri apartamente të qeta dhe të mirëmbajtura me kujdes, pak hapa nga qendra e Ferizajt – të rezervuara direkt te mikpritësi, pa tarifa platformash.", seeApts:"Shikoni apartamentet", viewApt:"Shiko & rezervo", ctaBtn:"Rezervoni qëndrimin", where2:"Ferizaj · Kosovë",
     pageTitle: "Ferizaj Stays · Apartamente me qira ditore në Ferizaj",
     metaDesc: "Rezervoni apartamente në qendër të Ferizajt direkt te Superhost-i. Pa tarifa platformash, përgjigje brenda një ore.",
@@ -168,11 +173,11 @@ const T = {
     phone:"WhatsApp / telefon", back:"← Të gjitha apartamentet", photo:"foto",
     type:"Apartament i tërë", hostedBy:"mikpritës Ariani", reviews:"vlerësime", guestFav:"I preferuar nga mysafirët",
     sleep:"Ku do të flini", offers:"Çfarë ofron ky vend", where:"Ku do të jeni",
-    whereText:"Lagje e qetë, rreth 5 minuta në këmbë nga qendra e qytetit dhe qendra tregtare Village. Adresa e saktë ju dërgohet pas rezervimit.",
+    whereText:"Lagje e qetë, rreth 5 minuta në këmbë nga qendra e qytetit dhe qendra tregtare Village.",
     perNight:"/ natë", checkin:"Hyrja", checkout:"Dalja", addDate:"Zgjidhni datën", guestsLbl:"Mysafirë", max:"Maks.",
     selectDates:"Zgjidhni datat", requestBook:"Kërko rezervim",
     fName:"Emri dhe mbiemri", fPhone:"Telefoni / WhatsApp", fEmail:"Email", fMsg:"Ora e mbërritjes, pyetje… (opsionale)",
-    send:"Dërgo kërkesën", sending:"Duke dërguar…", fine:"Nuk paguani asgjë tani",
+    send:"Dërgo kërkesën", sending:"Duke dërguar…", fine:"Asgjë për të paguar tani. Pas konfirmimit paguani 30% kapar; pjesën tjetër në mbërritje.", deposit:"Kapari pas konfirmimit", onArrival:"Në mbërritje",
     pickIn:"Zgjidhni datën e hyrjes", pickOut:"Zgjidhni datën e daljes", taken:"datat e vijëzuara janë të zëna",
     cleaning:"Pastrimi", service:"Tarifa e shërbimit", total:"Gjithsej",
     errMissing:"Ju lutemi shkruani emrin dhe një numër telefoni ose email.",
@@ -185,6 +190,8 @@ const T = {
     n:{ night:["natë","netë"], guest:["mysafir","mysafirë"], bedroom:["dhomë gjumi","dhoma gjumi"], bed:["shtrat","shtretër"], bath:["banjo","banjo"] },
   },
   de: {
+    allPhotos:"Alle Fotos anzeigen", close:"Schließen",
+    mapTitle:"Wo die Wohnungen liegen", approxLoc:"Die Check-in-Infos erhalten Sie nach der Buchung.", gmaps:"In Google Maps öffnen", mapLink:"Wohnung ansehen",
     intro:"Drei ruhige, liebevoll gepflegte Wohnungen, nur wenige Schritte vom Zentrum von Ferizaj – direkt beim Gastgeber gebucht, ohne Plattformgebühren.", seeApts:"Wohnungen ansehen", viewApt:"Ansehen & buchen", ctaBtn:"Aufenthalt buchen", where2:"Ferizaj · Kosovo",
     pageTitle: "Ferizaj Stays · Ferienwohnungen in Ferizaj, Kosovo",
     metaDesc: "Ferienwohnungen im Zentrum von Ferizaj direkt beim Superhost buchen. Keine Plattformgebühren, Antwort innerhalb einer Stunde.",
@@ -200,11 +207,11 @@ const T = {
     phone:"WhatsApp / Telefon", back:"← Alle Wohnungen", photo:"Foto",
     type:"Gesamte Wohnung", hostedBy:"Gastgeber: Arian", reviews:"Bewertungen", guestFav:"Gäste-Favorit",
     sleep:"Schlafmöglichkeiten", offers:"Ausstattung", where:"Lage",
-    whereText:"Ruhige Wohngegend, ca. 5 Gehminuten vom Stadtzentrum und dem Einkaufszentrum Village. Die genaue Adresse erhalten Sie nach der Buchung.",
+    whereText:"Ruhige Wohngegend, ca. 5 Gehminuten vom Stadtzentrum und dem Einkaufszentrum Village.",
     perNight:"/ Nacht", checkin:"Check-in", checkout:"Check-out", addDate:"Datum wählen", guestsLbl:"Gäste", max:"max.",
     selectDates:"Daten wählen", requestBook:"Buchung anfragen",
     fName:"Vor- und Nachname", fPhone:"Telefon / WhatsApp", fEmail:"E-Mail", fMsg:"Ankunftszeit, Fragen … (optional)",
-    send:"Anfrage senden", sending:"Wird gesendet …", fine:"Noch keine Zahlung fällig",
+    send:"Anfrage senden", sending:"Wird gesendet …", fine:"Jetzt nichts zu zahlen. Nach unserer Bestätigung zahlen Sie 30 % an, den Rest bei Ankunft.", deposit:"Anzahlung nach Bestätigung", onArrival:"Bei Ankunft",
     pickIn:"Check-in-Datum wählen", pickOut:"Check-out-Datum wählen", taken:"durchgestrichene Tage sind belegt",
     cleaning:"Reinigung", service:"Servicegebühr", total:"Gesamt",
     errMissing:"Bitte geben Sie Ihren Namen und eine Telefonnummer oder E-Mail an.",
@@ -245,7 +252,7 @@ function make(lang) {
 
   const cardHTML = p => `
     <a class="card" href="${url(p)}" data-id="${p.id}">
-      <img class="img" src="${p.photos[0]}" alt="${esc(title(p))}" loading="lazy" width="1200" height="800">
+      <img class="img" src="${small(p.photos[0])}" srcset="${small(p.photos[0])} 800w, ${p.photos[0]} 1600w" sizes="(max-width:860px) 100vw, 600px" alt="${esc(title(p))}" loading="lazy" width="1600" height="1067">
       <div class="body">
         <div class="eyebrow">${facts(p)}</div>
         <h3>${esc(p.name)} <span>— ${esc(tr(p.subtitle))}</span></h3>
@@ -259,7 +266,8 @@ function make(lang) {
   const detailHTML = p => `
     <h1>${esc(title(p))}</h1>
     <div class="meta">★ ${num(p.rating)} · ${p.reviews} ${t("reviews")}${p.guestFavorite ? " · " + t("guestFav") : ""} · Ferizaj, Kosovo</div>
-    <div class="gallery">${p.photos.slice(0,5).map((u,i) => `<img src="${u}" alt="${esc(p.name)} – ${t("photo")} ${i+1}" ${i ? 'loading="lazy"' : ""}>`).join("")}</div>
+    <div class="gallery">${p.photos.slice(0,5).map((u,i) => `<img src="${i ? small(u) : u}" alt="${esc(p.name)} – ${t("photo")} ${i+1}" ${i ? 'loading="lazy"' : ""} data-photo="${i}">`).join("")}
+      ${p.photos.length > 5 ? `<button class="allbtn" id="allPhotos" type="button">▦ ${t("allPhotos")} (${p.photos.length})</button>` : ""}</div>
     <div class="layout">
       <div>
         <h2 style="font-size:22px">${t("type")} · ${t("hostedBy")}</h2>
@@ -272,7 +280,8 @@ function make(lang) {
         <div class="block"><h2>★ ${num(p.rating)} · ${p.reviews} ${t("reviews")}</h2><div class="scores">
           ${Object.entries(p.scores).map(([k,v]) => `<div><b>${num(v,1,1)}</b>${T[lang].scores[k]}</div>`).join("")}
         </div></div>
-        <div class="block" style="border:0"><h2>${t("where")}</h2><p>${t("whereText")}</p></div>
+        <div class="block" style="border:0"><h2>${t("where")}</h2><p>${t("whereText")}</p>${MAPS_ON ? `
+          <div class="aptmap" id="aptMap" role="region" aria-label="${t("where")}"></div><div class="maphint"><a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}" target="_blank" rel="noopener">${t("gmaps")} ↗</a> · ${t("approxLoc")}</div>` : ""}</div>
       </div>
 
       <aside class="book">
@@ -301,7 +310,7 @@ function make(lang) {
   return { lang, t, tr, num, pl, title, facts, url, cardHTML, detailHTML };
 }
 
-const SHARED = { HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
+const SHARED = { DEPOSIT_PCT, MAPS_ON, small, HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
 if (typeof module !== "undefined" && module.exports) module.exports = SHARED;
 else root.SHARED = SHARED;
 
