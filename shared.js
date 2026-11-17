@@ -332,6 +332,89 @@ const GUIDE = {
   ],
 };
 
+/* ===== Rent a car =====
+   units = how many cars of that model (a date shows as taken only when all are booked).
+   photoCredit: the example photos are from Wikimedia Commons and their licence requires this credit;
+   set photoCredit to null once you use photos of your own cars. */
+const CAR_FEATURES = {
+  automatic: { en:"Automatic transmission", sq:"Kambio automatike", de:"Automatikgetriebe" },
+  seats5:    { en:"5 seats", sq:"5 ulëse", de:"5 Sitze" },
+  seats9:    { en:"8–9 seats", sq:"8–9 ulëse", de:"8–9 Sitze" },
+  three:     { en:"3 cars of this model", sq:"3 makina të këtij modeli", de:"3 Fahrzeuge dieses Modells" },
+  luggage:   { en:"Room for family luggage", sq:"Vend për bagazhet e familjes", de:"Platz für Familiengepäck" },
+  ferizaj:   { en:"Free pick-up in Ferizaj", sq:"Marrje falas në Ferizaj", de:"Kostenlose Übergabe in Ferizaj" },
+  airport:   { en:"Prishtina Airport on request", sq:"Aeroporti i Prishtinës sipas kërkesës", de:"Flughafen Prishtina auf Anfrage" },
+};
+const GOLF_TEXT = {
+  en:"Automatic and easy to drive — comfortable and economical for the city, the airport and day trips around Kosovo.",
+  sq:"Automatik dhe i lehtë për t'u ngarë – i rehatshëm dhe ekonomik për qytetin, aeroportin dhe udhëtime njëditore nëpër Kosovë.",
+  de:"Automatik und einfach zu fahren – komfortabel und sparsam für Stadt, Flughafen und Tagesausflüge im Kosovo.",
+};
+const CARS = [
+  {
+    id: "car-golf-7", slug: "golf-7", kind: "car", units: 3, price: 30,
+    name: { en:"VW Golf 7", sq:"VW Golf 7", de:"VW Golf 7" },
+    subtitle: { en:"automatic, 5 seats", sq:"automatik, 5 ulëse", de:"Automatik, 5 Sitze" },
+    seatsLabel: "seats5",
+    description: GOLF_TEXT,
+    features: ["automatic", "seats5", "three", "ferizaj", "airport"],
+    photos: [],   // add "/photos/golf-7/01.jpg" etc. once you have photos of your own car
+    photoCredit: null,
+  },
+  {
+    id: "car-golf-6", slug: "golf-6", kind: "car", units: 3, price: 25,
+    name: { en:"VW Golf 6", sq:"VW Golf 6", de:"VW Golf 6" },
+    subtitle: { en:"automatic, 5 seats", sq:"automatik, 5 ulëse", de:"Automatik, 5 Sitze" },
+    seatsLabel: "seats5",
+    description: GOLF_TEXT,
+    features: ["automatic", "seats5", "three", "ferizaj", "airport"],
+    photos: [],   // add "/photos/golf-6/01.jpg" etc. once you have photos of your own car
+    photoCredit: null,
+  },
+  {
+    id: "car-family-van", slug: "family-van", kind: "car", units: 1, price: 60,
+    name: { en:"Family van", sq:"Furgon familjar", de:"Familienbus" },
+    subtitle: { en:"8–9 seats", sq:"8–9 ulëse", de:"8–9 Sitze" },
+    seatsLabel: "seats9",
+    description: {
+      en:"Room for 8–9 people plus luggage — ideal for families, airport runs and day trips to Prizren or Brezovica.",
+      sq:"Vend për 8–9 persona dhe bagazhe – ideal për familje, transfer nga aeroporti dhe udhëtime për në Prizren ose Brezovicë.",
+      de:"Platz für 8–9 Personen samt Gepäck – ideal für Familien, Flughafenfahrten und Ausflüge nach Prizren oder Brezovica.",
+    },
+    features: ["seats9", "luggage", "ferizaj", "airport"],
+    photos: [],   // add "/photos/family-van/01.jpg" etc. once you have photos of your own car
+    photoCredit: null,
+  },
+];
+const CAR_T = {
+  en: { carsBack:"← Rent a car", photoSoon:"Photo coming soon", carsNav:"Rent a car", carsEyebrow:"Cars & family van", carsTitle:"Rent a car", carsLead:"Automatic VW Golfs and a family van for 8–9 people. Free pick-up in Ferizaj, or we meet you at Prishtina Airport.",
+        perDay:"/ day", carType:"Car rental", carIncl:"What you get", carPickTitle:"Pick-up & return",
+        carPickList:["Free pick-up and return in Ferizaj.", "Pick-up or return at Prishtina Airport on request (extra fee).", "Valid driving licence and ID or passport required."],
+        pickup:"Pick-up", ret:"Return", place:"Pick-up place", placeFerizaj:"Ferizaj (free)", placeAirport:"Prishtina Airport (fee on request)",
+        carPickIn:"Choose your pick-up date", carPickOut:"Choose your return date", example:"Example photo", photoBy:"Example photo",
+        carFine:"Nothing to pay now. We confirm availability and any airport fee on WhatsApp.", airportFee:"Airport pick-up", onRequest:"on request",
+        carTitle:(n, s) => `${n} for rent in Ferizaj – ${s} | Ferizaj Stays`, carView:"View & book",
+        days:["day","days"], placeWord:"Pick-up" },
+  sq: { carsBack:"← Makina me qira", photoSoon:"Foto së shpejti", carsNav:"Makina me qira", carsEyebrow:"Makina dhe furgon familjar", carsTitle:"Makina me qira", carsLead:"Golf automatik dhe një furgon familjar për 8–9 persona. Marrja falas në Ferizaj, ose ju presim në Aeroportin e Prishtinës.",
+        perDay:"/ ditë", carType:"Makinë me qira", carIncl:"Çfarë merrni", carPickTitle:"Marrja & kthimi",
+        carPickList:["Marrja dhe kthimi falas në Ferizaj.", "Marrja ose kthimi në Aeroportin e Prishtinës sipas kërkesës (me tarifë shtesë).", "Kërkohet patentë shoferi e vlefshme dhe letërnjoftim ose pasaportë."],
+        pickup:"Marrja", ret:"Kthimi", place:"Vendi i marrjes", placeFerizaj:"Ferizaj (falas)", placeAirport:"Aeroporti i Prishtinës (tarifë sipas kërkesës)",
+        carPickIn:"Zgjidhni datën e marrjes", carPickOut:"Zgjidhni datën e kthimit", example:"Foto ilustruese", photoBy:"Foto ilustruese",
+        carFine:"Asgjë për të paguar tani. Disponueshmërinë dhe tarifën e aeroportit (nëse ka) i konfirmojmë në WhatsApp.", airportFee:"Marrja në aeroport", onRequest:"sipas kërkesës",
+        carTitle:(n, s) => `${n} me qira në Ferizaj – ${s} | Ferizaj Stays`, carView:"Shiko & rezervo",
+        days:["ditë","ditë"], placeWord:"Marrja" },
+  de: { carsBack:"← Mietwagen", photoSoon:"Foto folgt", carsNav:"Mietwagen", carsEyebrow:"Autos & Familienbus", carsTitle:"Mietwagen", carsLead:"VW Golf mit Automatik und ein Familienbus für 8–9 Personen. Kostenlose Übergabe in Ferizaj, oder wir treffen Sie am Flughafen Prishtina.",
+        perDay:"/ Tag", carType:"Mietwagen", carIncl:"Das bekommen Sie", carPickTitle:"Abholung & Rückgabe",
+        carPickList:["Kostenlose Übergabe und Rückgabe in Ferizaj.", "Übergabe oder Rückgabe am Flughafen Prishtina auf Anfrage (gegen Aufpreis).", "Gültiger Führerschein und Ausweis oder Reisepass erforderlich."],
+        pickup:"Abholung", ret:"Rückgabe", place:"Übergabeort", placeFerizaj:"Ferizaj (kostenlos)", placeAirport:"Flughafen Prishtina (Gebühr auf Anfrage)",
+        carPickIn:"Abholdatum wählen", carPickOut:"Rückgabedatum wählen", example:"Beispielfoto", photoBy:"Beispielfoto",
+        carFine:"Jetzt nichts zu zahlen. Verfügbarkeit und ggf. Flughafengebühr bestätigen wir per WhatsApp.", airportFee:"Übergabe am Flughafen", onRequest:"auf Anfrage",
+        carTitle:(n, s) => `${n} mieten in Ferizaj – ${s} | Ferizaj Stays`, carView:"Ansehen & buchen",
+        days:["Tag","Tage"], placeWord:"Übergabe" },
+};
+
+for (const l of Object.keys(CAR_T)) Object.assign(T[l], CAR_T[l]);   // car texts join the main translations
+
 const LANGS = ["sq","de","en"];
 const LOCALE = { sq:"sq-AL", de:"de-DE", en:"en-GB" };
 // Albanian month/day names are built in, because many browsers have no Albanian date data
@@ -340,8 +423,9 @@ const SQ_MON_SHORT = ["jan","shk","mar","pri","maj","qer","korr","gush","sht","t
 const SQ_DOWS = ["Hë","Ma","Më","En","Pr","Sh","Di"];
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const bySlug = slug => PROPERTIES.find(p => p.slug === slug);
-const byId = id => PROPERTIES.find(p => p.id === id);
+const ITEMS = [...PROPERTIES, ...CARS];
+const bySlug = slug => ITEMS.find(p => p.slug === slug);
+const byId = id => ITEMS.find(p => p.id === id);
 
 /* Helpers and page templates for one language */
 function make(lang) {
@@ -442,10 +526,73 @@ function make(lang) {
       <a class="pill" href="/${lang}/#stays"><i></i>${t("guideCta")}</a>
     </div></section>`;
 
-  return { lang, t, tr, num, pl, title, facts, url, cardHTML, detailHTML, guideHTML };
+  const carName = c => tr(c.name);
+  const carTitle = c => `${carName(c)} — ${tr(c.subtitle)}`;
+  const plDays = n => `${n} ${T[lang].days[n === 1 ? 0 : 1]}`;
+  const credit = c => c.photoCredit ? `${t("photoBy")}: <a href="${c.photoCredit.source}" target="_blank" rel="noopener">${esc(c.photoCredit.author)}</a>, <a href="${c.photoCredit.licenceUrl}" target="_blank" rel="noopener license">${c.photoCredit.licence}</a>, Wikimedia Commons` : "";
+
+  const carSvg = c => c.seatsLabel === "seats9"
+    ? `<svg viewBox="0 0 120 60" aria-hidden="true"><path d="M8 44V22c0-5 3-9 8-9h56c5 0 8 2 11 6l13 14c3 1 8 3 8 8v3c0 2-1 3-3 3h-6"/><path d="M8 44h7m22 0h44"/><circle cx="26" cy="45" r="7"/><circle cx="92" cy="45" r="7"/><path d="M16 20h16v12H16zM38 20h16v12H38zM60 20h14l9 12H60z"/></svg>`
+    : `<svg viewBox="0 0 120 60" aria-hidden="true"><path d="M10 42v-8c0-3 2-5 5-6l14-4 12-10c3-2 6-3 10-3h20c4 0 7 1 10 4l11 11c6 1 12 3 14 5 2 2 2 4 2 7v4c0 2-1 3-3 3h-6"/><path d="M10 42h8m24 0h46"/><circle cx="30" cy="43" r="7"/><circle cx="96" cy="43" r="7"/><path d="M36 25l9-8c2-1 4-2 6-2h10v10zM66 25V15h9c2 0 4 1 5 2l8 8z"/></svg>`;
+  const carPhoto = (c, cls) => c.photos.length
+    ? `<img class="${cls}" src="${small(c.photos[0])}" srcset="${small(c.photos[0])} 800w, ${c.photos[0]} 1600w" sizes="(max-width:860px) 100vw, 400px" alt="${esc(carTitle(c))}" loading="lazy" width="1600" height="1067">`
+    : `<div class="${cls} nophoto">${carSvg(c)}<span>${t("photoSoon")}</span></div>`;
+  const carCardHTML = c => `
+    <a class="card carcard" href="${url(c)}" data-id="${c.id}">
+      <div class="imgwrap">${carPhoto(c, "img")}
+        ${c.photoCredit ? `<span class="examplebadge">${t("example")}</span>` : ""}</div>
+      <div class="body">
+        <div class="eyebrow">${c.features.slice(0, c.units > 1 ? 3 : 2).map(f => tr(CAR_FEATURES[f])).join(" · ")}</div>
+        <h3>${esc(carName(c))} <span>— ${esc(tr(c.subtitle))}</span></h3>
+        <div class="row">
+          <span class="price"><b>€${c.price}</b> ${t("perDay")}</span>
+          <span class="more"><i></i>${t("carView")}</span>
+        </div>
+        ${c.photoCredit ? `<div class="credit">${t("photoBy")}: ${esc(c.photoCredit.author)}, ${c.photoCredit.licence}</div>` : ""}
+      </div>
+    </a>`;
+
+  const carDetailHTML = c => `
+    <h1>${esc(carTitle(c))}</h1>
+    <div class="meta">${t("carType")} · Ferizaj, Kosovo</div>
+    <div class="carhero">${c.photos.length ? `<img src="${c.photos[0]}" alt="${esc(carTitle(c))}">` : carPhoto(c, "big")}${c.photoCredit ? `<span class="examplebadge">${t("example")}</span>` : ""}</div>
+    ${c.photoCredit ? `<div class="credit">${credit(c)}</div>` : ""}
+    <div class="layout">
+      <div>
+        <h2 style="font-size:22px">${t("carType")} · ${t("hostedBy")}</h2>
+        <div class="facts-line">${[tr(CAR_FEATURES[c.seatsLabel]), c.features.includes("automatic") ? tr(CAR_FEATURES.automatic) : null].filter(Boolean).join(" · ")}</div>
+        <div class="block"><p>${tr(c.description)}</p></div>
+        <div class="block"><h2>${t("carIncl")}</h2><ul class="amen">${c.features.map(f => `<li>${tr(CAR_FEATURES[f])}</li>`).join("")}</ul></div>
+        <div class="block" style="border:0"><h2>${t("carPickTitle")}</h2><ul class="paylist">${T[lang].carPickList.map(x => `<li>${x}</li>`).join("")}</ul></div>
+      </div>
+
+      <aside class="book">
+        <div class="p">€${c.price} <small>${t("perDay")}</small></div>
+        <div class="dates">
+          <button id="inBtn"><label>${t("pickup")}</label><span id="inTxt">${t("addDate")}</span></button>
+          <button id="outBtn"><label>${t("ret")}</label><span id="outTxt">${t("addDate")}</span></button>
+        </div>
+        <div class="cal" id="cal"></div>
+        <label class="placesel"><b>${t("place")}</b>
+          <select id="fPlace"><option value="ferizaj">${t("placeFerizaj")}</option><option value="airport">${t("placeAirport")}</option></select></label>
+        <div class="breakdown" id="breakdown"></div>
+        <button class="btn" id="reserve" disabled>${t("selectDates")}</button>
+        <div class="form" id="form">
+          <input id="fName" placeholder="${t("fName")}" autocomplete="name">
+          <input id="fPhone" placeholder="${t("fPhone")}" autocomplete="tel">
+          <input id="fEmail" type="email" placeholder="${t("fEmail")}" autocomplete="email">
+          <textarea id="fMsg" rows="3" placeholder="${t("fMsg")}"></textarea>
+          <button class="btn" id="send">${t("send")}</button>
+        </div>
+        <div class="done" id="done"></div>
+        <div class="fine" id="fine">${t("carFine")}</div>
+      </aside>
+    </div>`;
+
+  return { lang, t, tr, num, pl, title, facts, url, cardHTML, detailHTML, guideHTML, carName, carTitle, plDays, carCardHTML, carDetailHTML };
 }
 
-const SHARED = { GUIDE, DEPOSIT_PCT, MAPS_ON, small, HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
+const SHARED = { CARS, CAR_FEATURES, ITEMS, GUIDE, DEPOSIT_PCT, MAPS_ON, small, HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
 if (typeof module !== "undefined" && module.exports) module.exports = SHARED;
 else root.SHARED = SHARED;
 

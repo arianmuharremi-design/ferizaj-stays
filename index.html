@@ -95,6 +95,25 @@ header.solid .langs a.on{background:var(--ink);color:#fff}
 .card:hover .more{color:var(--accent)}
 .meta{color:var(--muted);font-size:14px;margin-top:4px}
 
+/* rent a car */
+#cars{padding:40px 0 110px}
+.section-lead{color:var(--muted);font-size:17px;max-width:640px;margin-top:12px}
+.cars-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.carcard .imgwrap{position:relative;overflow:hidden;border-radius:10px}
+.carcard .img{aspect-ratio:3/2}
+.carcard h3{font-size:clamp(22px,2vw,26px)}
+.nophoto{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;aspect-ratio:3/2;width:100%;background:linear-gradient(135deg,#f6f4f1,#ece7e0);color:var(--muted);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.nophoto svg{width:46%;max-width:220px;fill:none;stroke:#b9b1a6;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.carhero .nophoto.big{aspect-ratio:21/9;max-height:420px}
+.examplebadge{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.92);color:var(--ink);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+.credit{font-size:11px;color:var(--muted);margin-top:8px}
+.credit a{color:inherit}
+.carhero{position:relative;margin-top:24px;border-radius:14px;overflow:hidden;max-height:520px}
+.carhero img{width:100%;height:100%;max-height:520px;object-fit:cover;display:block}
+.placesel{display:block;border:1px solid var(--line);padding:10px 13px;margin-top:10px}
+.placesel b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.placesel select{width:100%;border:0;background:none;font:inherit;color:var(--ink);padding:4px 0 0}
+
 /* host + numbers */
 #about{background:var(--soft);padding:120px 0}
 .about{display:grid;grid-template-columns:1.1fr 1fr;gap:72px;align-items:center}
@@ -254,6 +273,8 @@ footer a{color:#fff}
 .maphint a{color:var(--ink);font-weight:600}
 
 @media (max-width:860px){
+  .cars-grid{grid-template-columns:1fr;gap:44px}
+  #cars{padding:20px 0 70px}
   .split{grid-template-columns:1fr;gap:28px}
   .mapcol{position:static;order:-1}
   .homemap{height:340px;min-height:0}
@@ -286,7 +307,7 @@ footer a{color:#fff}
 <header id="top"><div class="wrap">
   <a class="logo" href="/">Ferizaj<span>Stays</span></a>
   <div class="right">
-    <nav><a href="#stays" data-i18n="navStays">Apartments</a><a href="#about" data-i18n="navAbout">About</a><a href="/en/things-to-do" id="navGuide" data-i18n="navGuide">Things to do</a><a href="#contact" data-i18n="navContact">Contact</a></nav>
+    <nav><a href="#stays" data-i18n="navStays">Apartments</a><a href="#cars" data-i18n="carsNav">Rent a car</a><a href="#about" data-i18n="navAbout">About</a><a href="/en/things-to-do" id="navGuide" data-i18n="navGuide">Things to do</a><a href="#contact" data-i18n="navContact">Contact</a></nav>
     <a class="phone" href="https://wa.me/38349947897" target="_blank" rel="noopener" aria-label="WhatsApp +383 49 947 897"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.7a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.5-.3z"/></svg><span>+383 49 947 897</span></a>
     <div class="langs" id="langs" role="group" aria-label="Language">
       <a data-lang="sq" lang="sq" hreflang="sq" href="/sq/">SQ</a><a data-lang="de" lang="de" hreflang="de" href="/de/">DE</a><a data-lang="en" lang="en" hreflang="en" href="/en/">EN</a>
@@ -325,6 +346,14 @@ footer a{color:#fff}
     <div class="grid" id="grid"></div>
     <div class="mapcol"><div class="homemap" id="homeMap" role="region" aria-label="Map"></div></div>
   </div>
+</div></section>
+
+<section id="cars"><div class="wrap">
+  <div class="section-head">
+    <div><div class="eyebrow" data-i18n="carsEyebrow">Cars &amp; family van</div><h2 class="section-title" data-i18n="carsTitle">Rent a car</h2>
+    <p class="section-lead" data-i18n="carsLead">Automatic VW Golfs and a family van for 8–9 people. Free pick-up in Ferizaj, or we meet you at Prishtina Airport.</p></div>
+  </div>
+  <div class="cars-grid" id="carsGrid"></div>
 </div></section>
 
 <section id="about"><div class="wrap about">
@@ -405,7 +434,7 @@ const monthTitle = d => lang==="sq" ? `${SQ_MONTHS[d.getMonth()]} ${d.getFullYea
 const nightsBetween = (a,b) => Math.round((b-a)/864e5);
 const PAGE = document.body.dataset.page || "home";   // "guide" on the things-to-do page
 const pagePath = () => PAGE === "guide" ? location.pathname : state && $("#detail").classList.contains("open") ? `/${lang}/${state.p.slug}` : `/${lang}/`;
-const pageTitle = () => PAGE === "guide" ? document.title : state && $("#detail").classList.contains("open") ? T[lang].aptTitle(state.p.name, tr(state.p.subtitle)) : t("pageTitle");
+const pageTitle = () => PAGE === "guide" ? document.title : state && $("#detail").classList.contains("open") ? (state.p.kind === "car" ? T[lang].carTitle(H.carName(state.p), tr(state.p.subtitle)) : T[lang].aptTitle(state.p.name, tr(state.p.subtitle))) : t("pageTitle");
 
 /* ===== Language switch ===== */
 function applyLang(){
@@ -453,6 +482,7 @@ document.querySelectorAll("#langs a").forEach(a => a.onclick = e => {
 function renderGrid(){
   if(!$("#grid")) return;
   $("#grid").innerHTML = PROPERTIES.map(H.cardHTML).join("");
+  if($("#carsGrid")) $("#carsGrid").innerHTML = S.CARS.map(H.carCardHTML).join("");
   document.querySelectorAll(".card[data-id]").forEach(c => c.onclick = e => {
     if(e.metaKey || e.ctrlKey || e.shiftKey) return;   // let "open in new tab" work
     e.preventDefault(); openDetail(c.dataset.id, true);
@@ -464,18 +494,24 @@ function closeDetail(push){
   $("#detail").classList.remove("open"); document.body.style.overflow="";
   syncPage(!push);
 }
-$("#back").onclick = e => { e.preventDefault(); closeDetail(true); };
+$("#back").onclick = e => {
+  e.preventDefault();
+  const fromCar = state && state.isCar;
+  closeDetail(true);
+  if(fromCar) $("#cars")?.scrollIntoView();   // back to the car section
+};
 window.addEventListener("popstate", route);
 
 /* ===== Detail page + booking ===== */
 let state;
 function openDetail(id, push){
-  const p = PROPERTIES.find(x => x.id === id);
+  const p = S.byId(id);
+  const isCar = p.kind === "car";
   const today = new Date(); today.setHours(0,0,0,0);
   const bookedSet = new Set();
   const block = ranges => ranges.forEach(([a,b]) => { for(let d=parse(a); d<parse(b); d.setDate(d.getDate()+1)) bookedSet.add(iso(d)); });
   block(p.booked||[]);
-  state = { p, today, bookedSet, start:null, end:null, guests:1, month:new Date(today.getFullYear(),today.getMonth(),1), picking:"start", sent:false };
+  state = { p, isCar, today, bookedSet, start:null, end:null, guests:1, place:"ferizaj", month:new Date(today.getFullYear(),today.getMonth(),1), picking:"start", sent:false };
   // live availability from the server (Airbnb calendar + requests made on this site)
   fetch(`/api/availability/${p.id}`).then(r => r.ok ? r.json() : null).then(data => {
     if(!data || state.p !== p) return;
@@ -491,7 +527,8 @@ function openDetail(id, push){
 }
 
 function renderDetail(){
-  $("#detailBody").innerHTML = H.detailHTML(state.p);
+  $("#back").textContent = state.isCar ? t("carsBack") : t("back");
+  $("#detailBody").innerHTML = state.isCar ? H.carDetailHTML(state.p) : H.detailHTML(state.p);
   // keep anything the guest already typed when the language changes
   if(state.form){ for(const [k,v] of Object.entries(state.form)) $("#"+k).value = v; }
   ["fName","fPhone","fEmail","fMsg"].forEach(k => $("#"+k).oninput = e => { state.form = {...state.form, [k]: e.target.value}; });
@@ -499,8 +536,14 @@ function renderDetail(){
 
   $("#inBtn").onclick = () => { state.picking="start"; $("#cal").classList.add("open"); renderCal(); };
   $("#outBtn").onclick = () => { state.picking = state.start ? "end" : "start"; $("#cal").classList.add("open"); renderCal(); };
-  $("#gMinus").onclick = () => { state.guests--; renderSummary(); };
-  $("#gPlus").onclick = () => { state.guests++; renderSummary(); };
+  if($("#gMinus")){   // apartments: number of guests
+    $("#gMinus").onclick = () => { state.guests--; renderSummary(); };
+    $("#gPlus").onclick = () => { state.guests++; renderSummary(); };
+  }
+  if($("#fPlace")){   // cars: pick-up place
+    $("#fPlace").value = state.place;
+    $("#fPlace").onchange = e => { state.place = e.target.value; renderSummary(); };
+  }
   $("#reserve").onclick = () => { state.formOpen = true; $("#form").classList.add("open"); $("#reserve").style.display="none"; $("#fName").focus(); };
   $("#send").onclick = sendRequest;
   requestAnimationFrame(initAptMap);   // after the apartment view is visible, so the map knows its size
@@ -529,7 +572,7 @@ function renderCal(){
     <div class="cal-head"><button id="prev" ${canPrev?"":"disabled style='opacity:.3'"}>‹</button>
       <b>${monthTitle(month)}</b><button id="next">›</button></div>
     <div class="cal-grid">${cells}</div>
-    <div class="cal-note">${state.picking==="start"?t("pickIn"):t("pickOut")} · ${t("taken")}</div>`;
+    <div class="cal-note">${state.picking==="start" ? t(state.isCar ? "carPickIn" : "pickIn") : t(state.isCar ? "carPickOut" : "pickOut")} · ${t("taken")}</div>`;
   $("#prev").onclick = () => { if(canPrev){ state.month=new Date(y,m-1,1); renderCal(); } };
   $("#next").onclick = () => { state.month=new Date(y,m+1,1); renderCal(); };
   $("#cal").querySelectorAll(".day:not(:disabled)").forEach(b => b.onclick = () => {
@@ -542,13 +585,23 @@ function renderCal(){
 
 function renderSummary(){
   const {p,start,end} = state;
-  state.guests = Math.min(Math.max(state.guests,1),p.guests);
-  $("#gNum").textContent = state.guests;
-  $("#gMinus").disabled = state.guests<=1; $("#gPlus").disabled = state.guests>=p.guests;
+  if(!state.isCar){
+    state.guests = Math.min(Math.max(state.guests,1),p.guests);
+    $("#gNum").textContent = state.guests;
+    $("#gMinus").disabled = state.guests<=1; $("#gPlus").disabled = state.guests>=p.guests;
+  }
   $("#inTxt").textContent = start ? fmt(start) : t("addDate");
   $("#outTxt").textContent = end ? fmt(end) : t("addDate");
   const r = $("#reserve");
-  if(start && end){
+  if(start && end && state.isCar){
+    const n = nightsBetween(start,end), sub = n*p.price;
+    state.total = sub; state.nights = n;
+    $("#breakdown").innerHTML = `
+      <div><span>€${p.price} × ${H.plDays(n)}</span><span>€${sub}</span></div>
+      ${state.place === "airport" ? `<div class="sub"><span>${t("airportFee")}</span><span>${t("onRequest")}</span></div>` : ""}
+      <div class="total"><span>${t("total")}</span><span>€${state.total}${state.place === "airport" ? " +" : ""}</span></div>`;
+    r.disabled=false; r.textContent=t("requestBook");
+  } else if(start && end){
     const n = nightsBetween(start,end), sub=n*p.price;
     state.total = sub + CLEANING_FEE; state.nights = n;
     $("#breakdown").innerHTML = `
@@ -570,7 +623,7 @@ async function sendRequest(){
   const btn = $("#send"); btn.disabled = true; btn.textContent = t("sending");
   try {
     const r = await fetch("/api/requests", { method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ listing:p.id, start:iso(start), end:iso(end), guests, name, phone, email, message, total, lang }) });
+      body: JSON.stringify({ listing:p.id, start:iso(start), end:iso(end), guests, name, phone, email, message, total, lang, ...(state.isCar ? { pickup: state.place } : {}) }) });
     if(!r.ok){
       alert(r.status === 409 ? t("errTaken") : t("errGeneric"));
       btn.disabled = false; btn.textContent = t("send");
@@ -587,13 +640,14 @@ async function sendRequest(){
 
 function showDone(){
   const {p,start,end,guests,nights,total} = state, s = state.sent;
-  const dates = `${fmt(start)} → ${fmt(end)} (${pl(nights,"night")}), ${pl(guests,"guest")}`;
-  const msg = T[lang].waMsg(title(p), dates, total, s.name, s.phone, s.email, s.message);
+  const isCar = state.isCar, placeTxt = state.place === "airport" ? t("placeAirport") : t("placeFerizaj");
+  const dates = isCar ? `${fmt(start)} → ${fmt(end)} (${H.plDays(nights)}), ${t("place")}: ${placeTxt}` : `${fmt(start)} → ${fmt(end)} (${pl(nights,"night")}), ${pl(guests,"guest")}`;
+  const msg = T[lang].waMsg(isCar ? H.carTitle(p) : title(p), dates, total, s.name, s.phone, s.email, s.message);
   $("#form").classList.remove("open"); $("#reserve").style.display="none";
   $("#fine").style.display="none"; $("#breakdown").style.display="none";
   $("#done").classList.add("open");
   $("#done").innerHTML = `<div style="font-size:34px">✓</div><h3>${t("sentTitle")}</h3>
-    <p>${fmt(start)} → ${fmt(end)} · ${pl(guests,"guest")} · €${total}</p>
+    <p>${fmt(start)} → ${fmt(end)} · ${isCar ? placeTxt : pl(guests,"guest")} · €${total}</p>
     <p style="margin-top:8px">${t("sentText")}</p>
     <a class="wa" target="_blank" rel="noopener" href="https://wa.me/${HOST_WHATSAPP}?text=${encodeURIComponent(msg)}">${t("waBtn")}</a>`;
 }

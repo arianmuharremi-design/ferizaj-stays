@@ -20,7 +20,11 @@ const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"
 const PORT = process.env.PORT || CONFIG.port || 8080;
 // On the host, DATA_DIR points at a persistent disk so bookings survive redeploys.
 const BOOKINGS_FILE = path.join(process.env.DATA_DIR || path.join(ROOT, "data"), "bookings.json");
-const LISTING_IDS = Object.keys(CONFIG.listings);
+const LISTING_IDS = Object.keys(CONFIG.listings);            // apartments (Airbnb sync, calendars)
+const SHARED = require("./shared.js");
+const CAR_IDS = SHARED.CARS.map(c => c.id);                     // rental cars (no Airbnb)
+const ALL_IDS = [...LISTING_IDS, ...CAR_IDS];
+const itemName = id => CONFIG.listings[id]?.name || SHARED.make("en").carName(SHARED.byId(id) || { name: id }) || id;
 
 // Secrets come from environment variables (locally: the .env file), never from config.json.
 //   ADMIN_USERS="arian:password1,trim:password2"     dashboard logins, one per host/co-host
@@ -77,15 +81,17 @@ async function telegramChats() {
 }
 
 function requestAlert(b) {
-  const name = CONFIG.listings[b.listing]?.name || b.listing;
+  const name = itemName(b.listing);
+  const isCar = CAR_IDS.includes(b.listing);
   const nights = Math.round((Date.parse(b.end) - Date.parse(b.start)) / 864e5);
   const d = s => new Date(s + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
   const flag = { sq: "🇦🇱 Shqip", de: "🇩🇪 Deutsch", en: "🇬🇧 English" }[b.lang] || "";
   const wa = b.phone ? b.phone.replace(/\D/g, "").replace(/^00/, "").replace(/^0/, "383") : "";
   return [
     `🔔 <b>New booking request — ${tgEsc(name)}</b>`,
-    `📅 ${d(b.start)} → ${d(b.end)} (${nights} night${nights === 1 ? "" : "s"})`,
-    `👤 ${tgEsc(b.name)} · ${b.guests} guest${b.guests === 1 ? "" : "s"}${flag ? " · " + flag : ""}`,
+    `📅 ${d(b.start)} → ${d(b.end)} (${nights} ${isCar ? "day" : "night"}${nights === 1 ? "" : "s"})`,
+    isCar ? `🚗 Car rental · pick-up: ${b.pickup === "airport" ? "Prishtina Airport (fee on request)" : "Ferizaj"}` : null,
+    `👤 ${tgEsc(b.name)}${isCar ? "" : ` · ${b.guests} guest${b.guests === 1 ? "" : "s"}`}${flag ? " · " + flag : ""}`,
     b.phone ? `📞 ${tgEsc(b.phone)}${wa ? ` · <a href="https://wa.me/${wa}">WhatsApp</a>` : ""}` : null,
     b.email ? `✉️ ${tgEsc(b.email)}` : null,
     b.quotedTotal ? `💶 €${b.quotedTotal} quoted` : null,
@@ -150,7 +156,20 @@ async function syncAirbnb() {
   }
 }
 
+// days on which every car of a model is booked
+function carFullRanges(id) {
+  const units = SHARED.byId(id)?.units || 1, count = {};
+  for (const b of activeBookings(id))
+    for (let d = new Date(b.start + "T00:00:00Z"); d < new Date(b.end + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + 1)) {
+      const k = d.toISOString().slice(0, 10); count[k] = (count[k] || 0) + 1;
+    }
+  return Object.keys(count).filter(k => count[k] >= units).sort().map(k => {
+    const e = new Date(k + "T00:00:00Z"); e.setUTCDate(e.getUTCDate() + 1); return [k, e.toISOString().slice(0, 10)];
+  });
+}
+
 function blockedRanges(id) {
+  if (CAR_IDS.includes(id)) return carFullRanges(id);
   return [
     ...(airbnbBlocks[id]?.ranges || []),
     ...activeBookings(id).map(b => [b.start, b.end]),
@@ -180,7 +199,7 @@ const overlaps = (a1, a2, b1, b2) => a1 < b2 && b1 < a2;   // end dates are chec
 const clip = (v, n) => String(v ?? "").trim().slice(0, n);
 
 function checkDates(listing, start, end) {
-  if (!LISTING_IDS.includes(listing)) return "Unknown apartment";
+  if (!ALL_IDS.includes(listing)) return "Unknown apartment or car";
   if (!ISO.test(start) || !ISO.test(end) || start >= end) return "Invalid dates";
   if (start < new Date().toISOString().slice(0, 10)) return "Check-in is in the past";
   return null;
@@ -201,6 +220,7 @@ function createRequest(body) {
     name, phone, email, message: clip(body.message, 1000),
     quotedTotal: Number(body.total) || null,
     lang: ["sq", "de", "en"].includes(body.lang) ? body.lang : "en",
+    ...(CAR_IDS.includes(listing) ? { pickup: body.pickup === "airport" ? "airport" : "ferizaj" } : {}),
     source: "website", status: "pending", createdAt: new Date().toISOString(),
   };
   saveBookings([...loadBookings(), booking]);
@@ -223,6 +243,7 @@ function adminUser(req) {
 
 function adminOverview(me) {
   return {
+    cars: SHARED.CARS.map(c => ({ id: c.id, name: SHARED.make("en").carName(c), units: c.units })),
     me, telegram: TG_TOKEN && TG_CHAT ? "connected" : TG_TOKEN ? "needs-chat" : "off",
     listings: LISTING_IDS.map(id => ({
       id, name: CONFIG.listings[id].name || id,
@@ -271,8 +292,7 @@ function readJson(req, cb) {
   req.on("end", () => { let body; try { body = JSON.parse(raw); } catch { body = null; } cb(body); });
 }
 
-/* ---------- pages for Google: one per language and apartment ---------- */
-const SHARED = require("./shared.js");
+/* ---------- pages for Google: one per language, apartment and car ---------- */
 const OG_LOCALE = { sq: "sq_AL", de: "de_DE", en: "en_GB" };
 const clipText = (s, n) => s.length <= n ? s : s.slice(0, s.lastIndexOf(" ", n - 1)) + "…";
 const abs = u => u.startsWith("/") ? PUBLIC_URL + u : u;   // photos on our own site need the full address
@@ -295,9 +315,10 @@ function renderPage(lang, p, page = "home") {
   const H = SHARED.make(lang);
   const slug = p ? p.slug : guide ? SHARED.GUIDE.slug : "";
   const pageUrl = `${PUBLIC_URL}/${lang}/${slug}`;
-  const title = p ? T[lang].aptTitle(p.name, H.tr(p.subtitle)) : guide ? `${H.tr(SHARED.GUIDE.title)} | Ferizaj Stays` : H.t("pageTitle");
-  const desc = p ? clipText(H.tr(p.description)[0], 158) : guide ? H.tr(SHARED.GUIDE.metaDesc) : H.t("metaDesc");
-  const image = abs((p || PROPERTIES[0]).photos[0]);
+  const car = p && p.kind === "car";
+  const title = car ? T[lang].carTitle(H.carName(p), H.tr(p.subtitle)) : p ? T[lang].aptTitle(p.name, H.tr(p.subtitle)) : guide ? `${H.tr(SHARED.GUIDE.title)} | Ferizaj Stays` : H.t("pageTitle");
+  const desc = car ? clipText(H.tr(p.description), 158) : p ? clipText(H.tr(p.description)[0], 158) : guide ? H.tr(SHARED.GUIDE.metaDesc) : H.t("metaDesc");
+  const image = abs((p && p.photos.length ? p : PROPERTIES[0]).photos[0]);
   const prices = PROPERTIES.map(x => x.price);
   const business = {
     "@type": "LodgingBusiness", name: "Ferizaj Stays", url: `${PUBLIC_URL}/${lang}/`,
@@ -314,7 +335,11 @@ function renderPage(lang, p, page = "home") {
     amenityFeature: x.amenities.map(a => ({ "@type": "LocationFeatureSpecification", name: H.tr(SHARED.A[a]), value: true })),
     address: business.address,
   });
-  const structured = p
+  const structured = car
+    ? { "@context": "https://schema.org", "@type": "Car", name: H.carTitle(p), url: pageUrl, ...(p.photos.length ? { image: p.photos.map(abs) } : {}), description: H.tr(p.description),
+        ...(p.features.includes("automatic") ? { vehicleTransmission: "Automatic" } : {}), vehicleSeatingCapacity: p.seatsLabel === "seats9" ? 9 : 5,
+        offers: { "@type": "Offer", price: p.price, priceCurrency: "EUR", unitText: "DAY", areaServed: "Ferizaj, Kosovo", seller: { "@type": "Organization", name: "Ferizaj Stays", telephone: "+383 49 947 897" } } }
+    : p
     ? { "@context": "https://schema.org", ...apartment(p), containedInPlace: business }
     : { "@context": "https://schema.org", ...business, containsPlace: PROPERTIES.map(apartment) };
 
@@ -346,6 +371,7 @@ function renderPage(lang, p, page = "home") {
     .replace(/\n\s*<div class="mapcol">.*<\/div><\/div>/, m => SHARED.MAPS_ON ? m : "")
     .replace('<div class="split">', SHARED.MAPS_ON ? '<div class="split">' : '<div class="split nomap">')
     .replace('<div class="grid" id="grid"></div>', `<div class="grid" id="grid">${PROPERTIES.map(H.cardHTML).join("")}</div>`)
+    .replace('<div class="cars-grid" id="carsGrid"></div>', `<div class="cars-grid" id="carsGrid">${SHARED.CARS.map(H.carCardHTML).join("")}</div>`)
     .replace(/(<a data-lang="(\w+)" lang="\w+" hreflang="\w+") href="[^"]*">/g,
       (_, open, l) => `${open} href="/${l}/${slug}"${l === lang ? ' class="on"' : ""}>`)
     .replace('<a class="back" id="back" href="/"', `<a class="back" id="back" href="/${lang}/"`)
@@ -363,14 +389,15 @@ function renderPage(lang, p, page = "home") {
     .replace(/<h1 data-i18n="heroTitle">([^<]*)<\/h1>/, '<div class="hero-title" data-i18n="heroTitle">$1</div>')
     .replace('<header id="top">', '<header id="top" class="solid">')
     .replace('<div class="overlay" id="detail">', '<div class="overlay open" id="detail">')
-    .replace('<div class="wrap detail" id="detailBody"></div>', `<div class="wrap detail" id="detailBody">${H.detailHTML(p)}</div>`)
+    .replace(/(<a class="back" id="back" href="[^"]*" data-i18n="back">)[^<]*/, (m0, open) => open + esc(car ? H.t("carsBack") : H.t("back")))
+    .replace('<div class="wrap detail" id="detailBody"></div>', `<div class="wrap detail" id="detailBody">${car ? H.carDetailHTML(p) : H.detailHTML(p)}</div>`)
     .replace("<body>", '<body style="overflow:hidden">');
   return html;
 }
 
 function sitemap() {
   const { LANGS, PROPERTIES } = SHARED;
-  const pages = ["", ...PROPERTIES.map(p => p.slug), SHARED.GUIDE.slug];
+  const pages = ["", ...PROPERTIES.map(p => p.slug), ...SHARED.CARS.map(c => c.slug), SHARED.GUIDE.slug];
   const urls = pages.flatMap(slug => LANGS.map(lang => [
     `<url><loc>${PUBLIC_URL}/${lang}/${slug}</loc>`,
     ...LANGS.map(l => `<xhtml:link rel="alternate" hreflang="${l}" href="${PUBLIC_URL}/${l}/${slug}"/>`),
@@ -421,7 +448,7 @@ http.createServer((req, res) => {
   }
 
   if (req.method === "GET" && (m = url.pathname.match(/^\/api\/availability\/([\w-]+)$/))) {
-    if (!LISTING_IDS.includes(m[1])) return send(res, 404, { error: "Unknown apartment" });
+    if (!ALL_IDS.includes(m[1])) return send(res, 404, { error: "Unknown apartment or car" });
     return send(res, 200, { blocked: blockedRanges(m[1]), syncedAt: airbnbBlocks[m[1]]?.updated || null });
   }
 

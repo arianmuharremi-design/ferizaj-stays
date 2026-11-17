@@ -103,7 +103,8 @@ const ago = iso => { const m = Math.round((Date.now()-new Date(iso))/6e4); retur
 const waNumber = p => { let d = String(p).replace(/\D/g,""); if(d.startsWith("00")) d=d.slice(2); else if(d.startsWith("0")) d="383"+d.slice(1); return d; };
 
 let data = { listings:[], bookings:[] }, tab = "pending";
-const nameOf = id => data.listings.find(l => l.id===id)?.name || id;
+const nameOf = id => data.listings.find(l => l.id===id)?.name || (data.cars||[]).find(c => c.id===id)?.name || id;
+const isCarId = id => (data.cars||[]).some(c => c.id===id);
 
 const TABS = {
   pending:  { label:"Requests", filter: b => b.status==="pending" },
@@ -166,15 +167,22 @@ function card(b){
   const SQM = ["janar","shkurt","mars","prill","maj","qershor","korrik","gusht","shtator","tetor","nëntor","dhjetor"];
   const gd = s => b.lang==="sq" ? `${parse(s).getDate()} ${SQM[parse(s).getMonth()]}` : parse(s).toLocaleDateString(b.lang==="de"?"de-DE":"en-GB",{weekday:"short",day:"numeric",month:"short"});
   const when = `${gd(b.start)} → ${gd(b.end)}`;
-  const DEPOSIT_PCT = 30, dep = b.quotedTotal ? Math.round(b.quotedTotal * DEPOSIT_PCT / 100) : null;
-  const confirmText = encodeURIComponent({
+  const car = isCarId(b.listing);
+  const DEPOSIT_PCT = 30, dep = !car && b.quotedTotal ? Math.round(b.quotedTotal * DEPOSIT_PCT / 100) : null;   // deposit applies to apartments
+  const place = { sq: b.pickup==="airport" ? "Aeroporti i Prishtinës" : "Ferizaj", de: b.pickup==="airport" ? "Flughafen Prishtina" : "Ferizaj", en: b.pickup==="airport" ? "Prishtina Airport" : "Ferizaj" };
+  const carText = {
+    sq: `Përshëndetje ${first}, rezervimi i makinës (${apt}) është konfirmuar: ${when} (${n} ditë). Marrja: ${place.sq}. Do t'ju shkruaj këtu për detajet e dorëzimit. — Ariani, Ferizaj Stays`,
+    de: `Hallo ${first}, Ihr Mietwagen (${apt}) ist bestätigt: ${when} (${n} ${n>1?"Tage":"Tag"}). Übergabe: ${place.de}. Die Details zur Übergabe schicke ich Ihnen hier. — Arian, Ferizaj Stays`,
+  }[b.lang] || `Hi ${first}, your car rental (${apt}) is confirmed: ${when} (${n} day${n>1?"s":""}). Pick-up: ${place.en}. I'll send you the hand-over details here. — Arian, Ferizaj Stays`;
+  const confirmText = car ? encodeURIComponent(carText) : encodeURIComponent({
     sq: `Përshëndetje ${first}, rezervimi juaj në ${apt} është konfirmuar: ${when} (${n} ${n>1?"netë":"natë"}).${dep?` Për ta siguruar, ju lutem paguani kaparin prej €${dep} (${DEPOSIT_PCT}%); detajet e pagesës po jua dërgoj këtu.`:""} Adresën dhe detajet e hyrjes do t'jua dërgoj para mbërritjes. — Ariani, Ferizaj Stays`,
     de: `Hallo ${first}, Ihre Buchung in ${apt} ist bestätigt: ${when} (${n} ${n>1?"Nächte":"Nacht"}).${dep?` Bitte zahlen Sie zur Sicherung eine Anzahlung von €${dep} (${DEPOSIT_PCT} %); die Zahlungsdaten schicke ich Ihnen hier.`:""} Die Adresse und Check-in-Infos schicke ich Ihnen vor Ihrer Anreise. — Arian, Ferizaj Stays`,
   }[b.lang] || `Hi ${first}, your booking at ${apt} is confirmed: ${when} (${n} night${n>1?"s":""}).${dep?` To secure it, please pay a deposit of €${dep} (${DEPOSIT_PCT}%); I'll send you the payment details here.`:""} I'll send the address and check-in details before you arrive. — Arian, Ferizaj Stays`);
   const langName = {sq:"Shqip",de:"Deutsch",en:"English"}[b.lang];
   const contact = manual ? "" : `
     <div class="info">
-      <div><span>Guest</span><br>${esc(b.name)} · ${b.guests} guest${b.guests>1?"s":""}${langName?` · <span>${langName}</span>`:""}</div>
+      <div><span>Guest</span><br>${esc(b.name)}${car ? "" : ` · ${b.guests} guest${b.guests>1?"s":""}`}${langName?` · <span>${langName}</span>`:""}</div>
+      ${car?`<div><span>Car pick-up</span><br>${b.pickup==="airport"?"Prishtina Airport <span>(fee on request)</span>":"Ferizaj"}</div>`:""}
       ${b.phone?`<div><span>Phone</span><br><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>`:""}
       ${b.email?`<div><span>Email</span><br><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></div>`:""}
       <div><span>Quoted total</span><br>${b.quotedTotal?`€${esc(b.quotedTotal)}`:"—"} <span>(check price)</span></div>
@@ -192,7 +200,7 @@ function card(b){
   else if(b.status==="declined" && b.end>=todayIso && !manual) actions = `<button class="btn" data-act="pending" data-id="${b.id}">Reopen</button>`;
   return `<article class="card">
     <div class="top"><div><div class="apt">${esc(nameOf(b.listing))}</div>
-      <div class="when">${fmt(b.start)} → ${fmt(b.end)} <span class="apt">· ${n} night${n>1?"s":""}</span></div>
+      <div class="when">${fmt(b.start)} → ${fmt(b.end)} <span class="apt">· ${n} ${isCarId(b.listing) ? "day" : "night"}${n>1?"s":""}</span></div>
       ${manual?`<div class="apt">${esc(b.name)}</div>`:""}
       ${b.updatedBy?`<div class="apt">${manual?"Blocked":b.status==="confirmed"?"Accepted":b.status==="declined"?"Declined":"Reopened"} by ${esc(cap(b.updatedBy))}</div>`:""}</div>${pill}</div>
     ${contact}<div class="actions">${actions}</div></article>`;
