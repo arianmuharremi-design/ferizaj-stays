@@ -61,6 +61,7 @@ const PROPERTIES = [
   {
     id: "cozy-two-bedroom",
     slug: "intercon",
+    whereText: { en:"Quiet residential area on the west side of Ferizaj, about a 15-minute walk (3 minutes by car) to the city centre and The Village shopping centre.", sq:"Zonë e qetë banimi në pjesën perëndimore të Ferizajt, rreth 15 minuta në këmbë (3 minuta me makinë) deri në qendër të qytetit dhe në qendrën tregtare Village.", de:"Ruhiges Wohngebiet im Westen von Ferizaj, ca. 15 Gehminuten (3 Minuten mit dem Auto) bis zum Stadtzentrum und zum Einkaufszentrum Village." },
     lat: 42.371465, lng: 21.139560,   // map position (from Google Maps)
     name: "Intercon",
     subtitle: { en:"cozy 2-bedroom apartment", sq:"apartament i rehatshëm me dy dhoma gjumi", de:"gemütliche Wohnung mit zwei Schlafzimmern" },
@@ -70,11 +71,11 @@ const PROPERTIES = [
     airbnb: "https://www.airbnb.com/rooms/1677017208208577053",
     photos: localPhotos("intercon", 19),     // own photos (resized copies in /photos/intercon)
     description: {
-      en: ["A modern two-bedroom apartment in central Ferizaj, about a 5-minute walk from the city centre and The Village Shopping & Fun, with shops, cafés and restaurants close by.",
+      en: ["A modern two-bedroom apartment in Ferizaj, about a 15-minute walk (3 minutes by car) from the city centre and The Village Shopping & Fun.",
            "A master bedroom, a second bedroom with two single beds, a cozy living room, a fully equipped kitchen, fast Wi-Fi and a modern bathroom. Ideal for families, friends travelling together and business guests."],
-      sq: ["Apartament modern me dy dhoma gjumi në qendër të Ferizajt, rreth 5 minuta në këmbë nga qendra e qytetit dhe The Village Shopping & Fun, me dyqane, kafene dhe restorante afër.",
+      sq: ["Apartament modern me dy dhoma gjumi në Ferizaj, rreth 15 minuta në këmbë (3 minuta me makinë) nga qendra e qytetit dhe The Village Shopping & Fun.",
            "Një dhomë gjumi kryesore, një dhomë e dytë me dy shtretër teke, dhomë ndenjeje e rehatshme, kuzhinë plotësisht e pajisur, Wi-Fi i shpejtë dhe banjo moderne. Ideal për familje, shoqëri dhe udhëtarë biznesi."],
-      de: ["Moderne Wohnung mit zwei Schlafzimmern im Zentrum von Ferizaj, ca. 5 Gehminuten vom Stadtzentrum und The Village Shopping & Fun – Geschäfte, Cafés und Restaurants in der Nähe.",
+      de: ["Moderne Wohnung mit zwei Schlafzimmern in Ferizaj, ca. 15 Gehminuten (3 Minuten mit dem Auto) vom Stadtzentrum und The Village Shopping & Fun entfernt.",
            "Ein großes Schlafzimmer, ein zweites Schlafzimmer mit zwei Einzelbetten, ein gemütliches Wohnzimmer, eine voll ausgestattete Küche, schnelles WLAN und ein modernes Bad. Ideal für Familien, Freunde und Geschäftsreisende."],
     },
     sleeping: [
@@ -89,6 +90,7 @@ const PROPERTIES = [
   {
     id: "modern-one-bedroom",
     slug: "dream-palace",
+    whereText: { en:"Quiet residential area on the west side of Ferizaj, about a 15-minute walk (3 minutes by car) to the city centre and The Village shopping centre.", sq:"Zonë e qetë banimi në pjesën perëndimore të Ferizajt, rreth 15 minuta në këmbë (3 minuta me makinë) deri në qendër të qytetit dhe në qendrën tregtare Village.", de:"Ruhiges Wohngebiet im Westen von Ferizaj, ca. 15 Gehminuten (3 Minuten mit dem Auto) bis zum Stadtzentrum und zum Einkaufszentrum Village." },
     lat: 42.370497, lng: 21.137826,   // map position (from Google Maps)
     name: "Dream Palace",
     subtitle: { en:"modern 1-bedroom with balcony", sq:"apartament modern me një dhomë gjumi dhe ballkon", de:"moderne Wohnung mit Schlafzimmer und Balkon" },
@@ -102,11 +104,11 @@ const PROPERTIES = [
       "ae6912a9-777a-454b-b5bb-58f7b7250936"
     ].map(id => `https://a0.muscache.com/im/pictures/miso/Hosting-955832812626776693/original/${id}.jpeg?im_w=1200`),
     description: {
-      en: ["A contemporary apartment for solo travellers, couples or a small family who want to explore Ferizaj like locals — walkable to the centre and daily essentials.",
+      en: ["A contemporary apartment for solo travellers, couples or a small family who want to explore Ferizaj like locals — about a 15-minute walk (3 minutes by car) to the centre.",
            "Open-plan living, dining and kitchen with a dishwasher and oven, a sofa and flat-screen TV, and a private balcony with mountain views. No smoking inside (ashtray provided on the balcony)."],
-      sq: ["Apartament bashkëkohor për udhëtarë të vetëm, çifte ose familje të vogla që duan ta njohin Ferizajin si vendasit – në këmbë deri në qendër dhe te gjithçka që ju nevojitet.",
+      sq: ["Apartament bashkëkohor për udhëtarë të vetëm, çifte ose familje të vogla që duan ta njohin Ferizajin si vendasit – rreth 15 minuta në këmbë (3 minuta me makinë) deri në qendër.",
            "Hapësirë e hapur ndenjeje, ngrënieje dhe kuzhine me pjatalarëse dhe furrë, divan dhe TV, si dhe ballkon privat me pamje nga malet. Ndalohet duhani brenda (tavëll në ballkon)."],
-      de: ["Zeitgemäße Wohnung für Alleinreisende, Paare oder kleine Familien, die Ferizaj wie Einheimische erleben möchten – Zentrum und Einkaufsmöglichkeiten zu Fuß erreichbar.",
+      de: ["Zeitgemäße Wohnung für Alleinreisende, Paare oder kleine Familien, die Ferizaj wie Einheimische erleben möchten – ca. 15 Gehminuten (3 Minuten mit dem Auto) ins Zentrum.",
            "Offener Wohn-, Ess- und Küchenbereich mit Geschirrspüler und Backofen, Sofa und Flachbildfernseher sowie ein privater Balkon mit Bergblick. Rauchen nur auf dem Balkon (Aschenbecher vorhanden)."],
     },
     sleeping: [
@@ -122,9 +124,10 @@ const PROPERTIES = [
 /* ===== Translations ===== */
 const T = {
   en: {
+    payTitle:"Payment & cancellation", payList:["No payment when you send a request.", "After we confirm, you pay a 30% deposit by bank transfer or Western Union — we send the details on WhatsApp.", "The rest (70%) is paid on arrival, in cash or by transfer.", "Cancellation (firm): full refund of the deposit up to 30 days before check-in, 50% between 30 and 7 days before, no refund in the last 7 days."],
     allPhotos:"Show all photos", close:"Close",
     mapTitle:"Where the apartments are", approxLoc:"Check-in details are sent after booking.", gmaps:"Open in Google Maps", mapLink:"View apartment",
-    intro:"Three calm, carefully kept apartments, a short walk from the centre of Ferizaj — booked directly with your host, without platform fees.", seeApts:"See the apartments", viewApt:"View & book", ctaBtn:"Book your stay", where2:"Ferizaj · Kosovo",
+    intro:"Three calm, carefully kept apartments close to the centre of Ferizaj — booked directly with your host, without platform fees.", seeApts:"See the apartments", viewApt:"View & book", ctaBtn:"Book your stay", where2:"Ferizaj · Kosovo",
     pageTitle: "Ferizaj Stays · Apartments in Ferizaj, Kosovo",
     metaDesc: "Book apartments in the heart of Ferizaj, Kosovo directly with a Superhost. No platform fees, reply within an hour.",
     aptTitle: (name, sub) => `${name} – ${sub} | Ferizaj Stays`,
@@ -133,9 +136,9 @@ const T = {
     heroText:"Three apartments run by a Superhost with 5 years of hosting. Book directly with us and skip the platform fees.",
     badgeRating:"★ 4.87 from 108 reviews", badgeReply:"Replies within an hour",
     ourApts:"Our apartments", aboutTitle:"Hosted by Arian",
-    aboutP1:"I've hosted guests in Ferizaj for five years, together with my co-hosts Trim, Vlorë and Vjollca. Every apartment is in a quiet street a few minutes' walk from the city square and the Village shopping centre.",
+    aboutP1:"I've hosted guests in Ferizaj for five years, together with my co-hosts Trim, Vlorë and Vjollca. All three are on quiet streets: Arch Point a few minutes' walk from the city square and The Village, Intercon and Dream Palace about 15 minutes' walk away.",
     aboutP2:"Booking here works just like on the big platforms: pick your dates, send a request, and I'll confirm within the hour.",
-    fact1:"5 yrs", fact1t:"hosting", fact2t:"response rate", fact3:"4.87", fact3t:"guest rating", fact4:"5 min", fact4t:"walk to centre",
+    fact1:"5 yrs", fact1t:"hosting", fact2t:"response rate", fact3:"4.87", fact3t:"guest rating", fact4:"5–15 min", fact4t:"walk to centre",
     phone:"WhatsApp / phone", back:"← All apartments", photo:"photo",
     type:"Entire apartment", hostedBy:"hosted by Arian", reviews:"reviews", guestFav:"Guest favourite",
     sleep:"Where you'll sleep", offers:"What this place offers", where:"Where you'll be",
@@ -156,9 +159,10 @@ const T = {
     n:{ night:["night","nights"], guest:["guest","guests"], bedroom:["bedroom","bedrooms"], bed:["bed","beds"], bath:["bath","baths"] },
   },
   sq: {
+    payTitle:"Pagesa & anulimi", payList:["Asnjë pagesë kur dërgoni kërkesën.", "Pas konfirmimit paguani 30% kapar me transfer bankar ose Western Union – detajet jua dërgojmë në WhatsApp.", "Pjesa tjetër (70%) paguhet në mbërritje, me para në dorë ose me transfer.", "Anulimi: kapari kthehet plotësisht deri 30 ditë para hyrjes, 50% nga 30 deri 7 ditë para, pa kthim në 7 ditët e fundit."],
     allPhotos:"Shiko të gjitha fotot", close:"Mbyll",
     mapTitle:"Ku ndodhen apartamentet", approxLoc:"Detajet e hyrjes ju dërgohen pas rezervimit.", gmaps:"Hape në Google Maps", mapLink:"Shiko apartamentin",
-    intro:"Tri apartamente të qeta dhe të mirëmbajtura me kujdes, pak hapa nga qendra e Ferizajt – të rezervuara direkt te mikpritësi, pa tarifa platformash.", seeApts:"Shikoni apartamentet", viewApt:"Shiko & rezervo", ctaBtn:"Rezervoni qëndrimin", where2:"Ferizaj · Kosovë",
+    intro:"Tri apartamente të qeta dhe të mirëmbajtura me kujdes, afër qendrës së Ferizajt – të rezervuara direkt te mikpritësi, pa tarifa platformash.", seeApts:"Shikoni apartamentet", viewApt:"Shiko & rezervo", ctaBtn:"Rezervoni qëndrimin", where2:"Ferizaj · Kosovë",
     pageTitle: "Ferizaj Stays · Apartamente me qira ditore në Ferizaj",
     metaDesc: "Rezervoni apartamente në qendër të Ferizajt direkt te Superhost-i. Pa tarifa platformash, përgjigje brenda një ore.",
     aptTitle: (name, sub) => `${name} – ${sub} | Ferizaj Stays`,
@@ -167,9 +171,9 @@ const T = {
     heroText:"Tri apartamente të menaxhuara nga një Superhost me 5 vjet përvojë. Rezervoni direkt me ne, pa tarifat e platformave.",
     badgeRating:"★ 4,87 nga 108 vlerësime", badgeReply:"Përgjigjemi brenda një ore",
     ourApts:"Apartamentet tona", aboutTitle:"Ju mirëpret Ariani",
-    aboutP1:"Pres mysafirë në Ferizaj prej pesë vjetësh, së bashku me bashkëmikpritësit Trim, Vlorë dhe Vjollca. Çdo apartament ndodhet në një rrugë të qetë, vetëm pak minuta në këmbë nga sheshi i qytetit dhe qendra tregtare Village.",
+    aboutP1:"Pres mysafirë në Ferizaj prej pesë vjetësh, së bashku me bashkëmikpritësit Trim, Vlorë dhe Vjollca. Të tria ndodhen në rrugë të qeta: Arch Point pak minuta në këmbë nga sheshi dhe Village, Intercon dhe Dream Palace rreth 15 minuta larg.",
     aboutP2:"Rezervimi këtu funksionon si në platformat e mëdha: zgjidhni datat, dërgoni kërkesën dhe unë jua konfirmoj brenda një ore.",
-    fact1:"5 vjet", fact1t:"mikpritje", fact2t:"shkalla e përgjigjes", fact3:"4,87", fact3t:"vlerësimi i mysafirëve", fact4:"5 min", fact4t:"në këmbë deri në qendër",
+    fact1:"5 vjet", fact1t:"mikpritje", fact2t:"shkalla e përgjigjes", fact3:"4,87", fact3t:"vlerësimi i mysafirëve", fact4:"5–15 min", fact4t:"në këmbë deri në qendër",
     phone:"WhatsApp / telefon", back:"← Të gjitha apartamentet", photo:"foto",
     type:"Apartament i tërë", hostedBy:"mikpritës Ariani", reviews:"vlerësime", guestFav:"I preferuar nga mysafirët",
     sleep:"Ku do të flini", offers:"Çfarë ofron ky vend", where:"Ku do të jeni",
@@ -190,9 +194,10 @@ const T = {
     n:{ night:["natë","netë"], guest:["mysafir","mysafirë"], bedroom:["dhomë gjumi","dhoma gjumi"], bed:["shtrat","shtretër"], bath:["banjo","banjo"] },
   },
   de: {
+    payTitle:"Zahlung & Stornierung", payList:["Bei der Anfrage zahlen Sie nichts.", "Nach unserer Bestätigung zahlen Sie 30 % an – per Banküberweisung oder Western Union. Die Daten schicken wir Ihnen per WhatsApp.", "Der Rest (70 %) wird bei Ankunft bezahlt, bar oder per Überweisung.", "Stornierung: volle Rückerstattung der Anzahlung bis 30 Tage vor Anreise, 50 % zwischen 30 und 7 Tagen vorher, danach keine Rückerstattung."],
     allPhotos:"Alle Fotos anzeigen", close:"Schließen",
     mapTitle:"Wo die Wohnungen liegen", approxLoc:"Die Check-in-Infos erhalten Sie nach der Buchung.", gmaps:"In Google Maps öffnen", mapLink:"Wohnung ansehen",
-    intro:"Drei ruhige, liebevoll gepflegte Wohnungen, nur wenige Schritte vom Zentrum von Ferizaj – direkt beim Gastgeber gebucht, ohne Plattformgebühren.", seeApts:"Wohnungen ansehen", viewApt:"Ansehen & buchen", ctaBtn:"Aufenthalt buchen", where2:"Ferizaj · Kosovo",
+    intro:"Drei ruhige, liebevoll gepflegte Wohnungen nahe dem Zentrum von Ferizaj – direkt beim Gastgeber gebucht, ohne Plattformgebühren.", seeApts:"Wohnungen ansehen", viewApt:"Ansehen & buchen", ctaBtn:"Aufenthalt buchen", where2:"Ferizaj · Kosovo",
     pageTitle: "Ferizaj Stays · Ferienwohnungen in Ferizaj, Kosovo",
     metaDesc: "Ferienwohnungen im Zentrum von Ferizaj direkt beim Superhost buchen. Keine Plattformgebühren, Antwort innerhalb einer Stunde.",
     aptTitle: (name, sub) => `${name} – Ferienwohnung in Ferizaj: ${sub} | Ferizaj Stays`,
@@ -201,9 +206,9 @@ const T = {
     heroText:"Drei Wohnungen, betreut von einem Superhost mit 5 Jahren Erfahrung. Buchen Sie direkt bei uns – ohne Plattformgebühren.",
     badgeRating:"★ 4,87 aus 108 Bewertungen", badgeReply:"Antwort innerhalb einer Stunde",
     ourApts:"Unsere Wohnungen", aboutTitle:"Ihr Gastgeber: Arian",
-    aboutP1:"Seit fünf Jahren empfange ich Gäste in Ferizaj, zusammen mit meinen Co-Gastgebern Trim, Vlorë und Vjollca. Alle Wohnungen liegen in ruhigen Straßen, nur wenige Gehminuten vom Stadtplatz und dem Einkaufszentrum Village entfernt.",
+    aboutP1:"Seit fünf Jahren empfange ich Gäste in Ferizaj, zusammen mit meinen Co-Gastgebern Trim, Vlorë und Vjollca. Alle drei liegen in ruhigen Straßen: Arch Point wenige Gehminuten vom Stadtplatz und dem Village, Intercon und Dream Palace ca. 15 Gehminuten entfernt.",
     aboutP2:"Die Buchung funktioniert wie auf den großen Plattformen: Daten wählen, Anfrage senden – ich bestätige innerhalb einer Stunde.",
-    fact1:"5 Jahre", fact1t:"Gastgeber", fact2t:"Antwortrate", fact3:"4,87", fact3t:"Gästebewertung", fact4:"5 Min.", fact4t:"zu Fuß ins Zentrum",
+    fact1:"5 Jahre", fact1t:"Gastgeber", fact2t:"Antwortrate", fact3:"4,87", fact3t:"Gästebewertung", fact4:"5–15 Min.", fact4t:"zu Fuß ins Zentrum",
     phone:"WhatsApp / Telefon", back:"← Alle Wohnungen", photo:"Foto",
     type:"Gesamte Wohnung", hostedBy:"Gastgeber: Arian", reviews:"Bewertungen", guestFav:"Gäste-Favorit",
     sleep:"Schlafmöglichkeiten", offers:"Ausstattung", where:"Lage",
@@ -280,7 +285,8 @@ function make(lang) {
         <div class="block"><h2>★ ${num(p.rating)} · ${p.reviews} ${t("reviews")}</h2><div class="scores">
           ${Object.entries(p.scores).map(([k,v]) => `<div><b>${num(v,1,1)}</b>${T[lang].scores[k]}</div>`).join("")}
         </div></div>
-        <div class="block" style="border:0"><h2>${t("where")}</h2><p>${t("whereText")}</p>${MAPS_ON ? `
+        <div class="block"><h2>${t("payTitle")}</h2><ul class="paylist">${T[lang].payList.map(x => `<li>${x}</li>`).join("")}</ul></div>
+        <div class="block" style="border:0"><h2>${t("where")}</h2><p>${p.whereText ? tr(p.whereText) : t("whereText")}</p>${MAPS_ON ? `
           <div class="aptmap" id="aptMap" role="region" aria-label="${t("where")}"></div><div class="maphint"><a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}" target="_blank" rel="noopener">${t("gmaps")} ↗</a> · ${t("approxLoc")}</div>` : ""}</div>
       </div>
 
