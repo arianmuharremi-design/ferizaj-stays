@@ -70,6 +70,37 @@ header.solid .langs a.on{background:var(--ink);color:#fff}
 .badge{border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:6px 14px;font-size:14px;backdrop-filter:blur(6px);background:rgba(255,255,255,.08)}
 .hero .pill{margin-top:34px}
 
+/* date search on the top photo */
+.search{display:grid;grid-template-columns:1fr 1fr 110px auto;gap:0;margin-top:30px;max-width:760px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25);overflow:hidden;color:var(--ink)}
+.search label{display:flex;flex-direction:column;padding:12px 16px;border-right:1px solid var(--line);min-width:0}
+.search label span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.search input,.search select{border:0;background:none;font:inherit;font-size:16px;color:var(--ink);padding:4px 0 0;width:100%;min-width:0}
+.sbtn{border:0;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:600;font-size:16px;padding:0 30px;transition:background .2s}
+.sbtn:hover{background:var(--ink)}
+.hero .search + .pill{margin-top:22px}
+.searchinfo{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--soft);border-radius:12px;padding:14px 18px;margin:-24px 0 32px;font-weight:600}
+.searchinfo button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:14px}
+.avail{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px}
+.avail.ok{background:#e3f1e8;color:#2f7a4f}
+.avail.no{background:#f4e3e1;color:#a8322b}
+.card.unavailable .img{filter:grayscale(.7);opacity:.6}
+.stay{display:block;margin-top:6px;color:var(--ink);font-weight:600}
+.savetag{display:block;font-style:normal;color:#2f7a4f;font-size:13px;font-weight:600;margin-top:4px}
+
+/* booking box extras */
+.direct{margin-top:8px;font-size:13px;color:#2f7a4f;font-weight:600}
+.breakdown .disc span:last-child,.breakdown .save{color:#2f7a4f}
+.breakdown .save{font-size:13px;font-weight:600;padding-top:8px}
+.breakdown .carrow{border-top:1px dashed var(--line);margin-top:8px;padding-top:10px}
+.addcar{display:flex;gap:10px;align-items:center;border:1px solid var(--line);padding:11px 13px;margin-top:10px;cursor:pointer;font-weight:600;font-size:15px}
+.addcar input{width:18px;height:18px;accent-color:var(--accent)}
+.pkg{border:1px solid var(--line);border-top:0;padding:4px 13px 12px}
+.pkg label{display:block;margin-top:8px}
+.pkg b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.pkg select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;margin-top:4px;background:#fff}
+.longhint{font-size:13px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5}
+.longhint a{color:var(--ink);font-weight:600}
+
 /* big statement + photo collage */
 .intro{padding:140px 0 120px}
 .statement{font-family:var(--serif);font-weight:800;font-size:clamp(28px,3.6vw,46px);line-height:1.18;letter-spacing:-.015em;text-align:center;max-width:900px;margin:0 auto}
@@ -183,7 +214,7 @@ footer a{color:#fff}
 .scores b{display:block;color:var(--ink);font-size:20px;font-family:var(--sans)}
 
 /* booking box */
-.book{position:sticky;top:80px;align-self:start;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:26px}
+.book{position:sticky;top:80px;align-self:start;max-height:calc(100vh - 150px);overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:26px}
 .book .p{font-family:var(--sans);font-size:26px;font-weight:600}
 .book .p small{font-size:15px;font-weight:400;color:var(--muted)}
 .dates{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);margin-top:18px;overflow:hidden}
@@ -273,6 +304,11 @@ footer a{color:#fff}
 .maphint a{color:var(--ink);font-weight:600}
 
 @media (max-width:860px){
+  .search{grid-template-columns:1fr 1fr;border-radius:14px}
+  .search label{border-bottom:1px solid var(--line)}
+  .search label:nth-child(2){border-right:0}
+  .search .sg{grid-column:1 / 2}
+  .sbtn{padding:14px}
   .cars-grid{grid-template-columns:1fr;gap:44px}
   #cars{padding:20px 0 70px}
   .split{grid-template-columns:1fr;gap:28px}
@@ -325,7 +361,14 @@ footer a{color:#fff}
       <span class="badge" data-i18n="badgeRating">★ 4.87 from 108 reviews</span>
       <span class="badge">Superhost</span>
       <span class="badge" data-i18n="badgeReply">Replies within an hour</span>
+      <span class="badge" data-i18n="directBadge">No booking fees</span>
     </div>
+    <form class="search" id="search" autocomplete="off">
+      <label><span data-i18n="sArrive">Arrival</span><input type="date" id="sIn" required></label>
+      <label><span data-i18n="sLeave">Departure</span><input type="date" id="sOut" required></label>
+      <label class="sg"><span data-i18n="guestsLbl">Guests</span><select id="sGuests"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
+      <button type="submit" class="sbtn"><span data-i18n="sBtn">Search</span></button>
+    </form>
     <a class="pill light" href="#stays"><i></i><span data-i18n="seeApts">See the apartments</span></a>
   </div>
 </section>
@@ -342,6 +385,7 @@ footer a{color:#fff}
   <div class="section-head">
     <div><div class="eyebrow" data-i18n="where2">Ferizaj · Kosovo</div><h2 class="section-title" data-i18n="ourApts">Our apartments</h2></div>
   </div>
+  <div class="searchinfo" id="searchInfo" hidden></div>
   <div class="split">
     <div class="grid" id="grid"></div>
     <div class="mapcol"><div class="homemap" id="homeMap" role="region" aria-label="Map"></div></div>
@@ -483,9 +527,10 @@ function renderGrid(){
   if(!$("#grid")) return;
   $("#grid").innerHTML = PROPERTIES.map(H.cardHTML).join("");
   if($("#carsGrid")) $("#carsGrid").innerHTML = S.CARS.map(H.carCardHTML).join("");
+  decorateSearch();
   document.querySelectorAll(".card[data-id]").forEach(c => c.onclick = e => {
     if(e.metaKey || e.ctrlKey || e.shiftKey) return;   // let "open in new tab" work
-    e.preventDefault(); openDetail(c.dataset.id, true);
+    e.preventDefault(); openDetail(c.dataset.id, true, search && !S.byId(c.dataset.id).kind ? search : null);
   });
   bindCardHover();
 }
@@ -504,14 +549,16 @@ window.addEventListener("popstate", route);
 
 /* ===== Detail page + booking ===== */
 let state;
-function openDetail(id, push){
+function openDetail(id, push, pre){
   const p = S.byId(id);
   const isCar = p.kind === "car";
   const today = new Date(); today.setHours(0,0,0,0);
   const bookedSet = new Set();
   const block = ranges => ranges.forEach(([a,b]) => { for(let d=parse(a); d<parse(b); d.setDate(d.getDate()+1)) bookedSet.add(iso(d)); });
   block(p.booked||[]);
-  state = { p, isCar, today, bookedSet, start:null, end:null, guests:1, place:"ferizaj", month:new Date(today.getFullYear(),today.getMonth(),1), picking:"start", sent:false };
+  state = { p, isCar, today, bookedSet, start:null, end:null, guests:1, place:"ferizaj", month:new Date(today.getFullYear(),today.getMonth(),1), picking:"start", sent:false,
+            pkg:{ on:false, car:S.CARS[0].id, place:"ferizaj", full:{} } };
+  if(pre){ state.start = pre.start; state.end = pre.end; state.guests = pre.guests; state.month = new Date(pre.start.getFullYear(), pre.start.getMonth(), 1); }
   // live availability from the server (Airbnb calendar + requests made on this site)
   fetch(`/api/availability/${p.id}`).then(r => r.ok ? r.json() : null).then(data => {
     if(!data || state.p !== p) return;
@@ -539,6 +586,14 @@ function renderDetail(){
   if($("#gMinus")){   // apartments: number of guests
     $("#gMinus").onclick = () => { state.guests--; renderSummary(); };
     $("#gPlus").onclick = () => { state.guests++; renderSummary(); };
+  }
+  if($("#pkgOn")){   // apartments: add a car for the stay
+    $("#pkgOn").checked = state.pkg.on; $("#pkg").hidden = !state.pkg.on;
+    $("#pkgCar").value = state.pkg.car; $("#pkgPlace").value = state.pkg.place;
+    $("#pkgOn").onchange = e => { state.pkg.on = e.target.checked; $("#pkg").hidden = !state.pkg.on; if(state.pkg.on) loadCarAvailability(); renderSummary(); };
+    $("#pkgCar").onchange = e => { state.pkg.car = e.target.value; renderSummary(); };
+    $("#pkgPlace").onchange = e => { state.pkg.place = e.target.value; renderSummary(); };
+    if(state.pkg.on) markFullCars();
   }
   if($("#fPlace")){   // cars: pick-up place
     $("#fPlace").value = state.place;
@@ -579,7 +634,7 @@ function renderCal(){
     const d=parse(b.dataset.d);
     if(state.picking==="start"){ state.start=d; state.end=null; state.picking="end"; }
     else { state.end=d; state.picking="start"; $("#cal").classList.remove("open"); }
-    renderSummary(); if(state.picking==="end") renderCal();
+    renderSummary(); if(state.picking==="end") renderCal(); else if(state.pkg && state.pkg.on) markFullCars();
   });
 }
 
@@ -602,15 +657,23 @@ function renderSummary(){
       <div class="total"><span>${t("total")}</span><span>€${state.total}${state.place === "airport" ? " +" : ""}</span></div>`;
     r.disabled=false; r.textContent=t("requestBook");
   } else if(start && end){
-    const n = nightsBetween(start,end), sub=n*p.price;
-    state.total = sub + CLEANING_FEE; state.nights = n;
+    const n = nightsBetween(start,end), sp = S.stayPrice(p, n);
+    state.total = sp.total; state.nights = n;
+    const dep = Math.round(sp.total * S.DEPOSIT_PCT / 100);
+    const car = state.pkg.on ? S.byId(state.pkg.car) : null, carTotal = car ? car.price * n : 0;
+    state.carTotal = carTotal;
     $("#breakdown").innerHTML = `
-      <div><span>€${p.price} × ${pl(n,"night")}</span><span>€${sub}</span></div>
+      <div><span>€${p.price} × ${pl(n,"night")}</span><span>€${sp.sub}</span></div>
+      ${sp.disc ? `<div class="disc"><span>${T[lang][sp.key](sp.pct)}</span><span>−€${sp.disc}</span></div>` : ""}
       ${CLEANING_FEE ? `<div><span>${t("cleaning")}</span><span>€${CLEANING_FEE}</span></div>` : ""}
       <div><span>${t("service")}</span><span>€0</span></div>
-      <div class="total"><span>${t("total")}</span><span>€${state.total}</span></div>
-      <div class="sub"><span>${t("deposit")} (${S.DEPOSIT_PCT}%)</span><span>€${Math.round(state.total * S.DEPOSIT_PCT / 100)}</span></div>
-      <div class="sub"><span>${t("onArrival")}</span><span>€${state.total - Math.round(state.total * S.DEPOSIT_PCT / 100)}</span></div>`;
+      <div class="total"><span>${t("total")}</span><span>€${sp.total}</span></div>
+      <div class="sub"><span>${t("deposit")} (${S.DEPOSIT_PCT}%)</span><span>€${dep}</span></div>
+      <div class="sub"><span>${t("onArrival")}</span><span>€${sp.total - dep}</span></div>
+      ${car ? `<div class="carrow"><span>🚗 ${T[lang].carLine(esc(H.carName(car)), H.plDays(n))}${state.pkg.full[car.id] ? ` (${t("pkgFull")})` : ""}</span><span>€${carTotal}</span></div>
+        ${state.pkg.place === "airport" ? `<div class="sub"><span>${t("airportFee")}</span><span>${t("onRequest")}</span></div>` : ""}
+        <div class="total"><span>${t("totalWithCar")}</span><span>€${sp.total + carTotal}${state.pkg.place === "airport" ? " +" : ""}</span></div>` : ""}
+      <div class="save">✓ ${T[lang].saveVs(sp.saving)}</div>`;
     r.disabled=false; r.textContent=t("requestBook");
   } else { $("#breakdown").innerHTML=""; r.disabled=true; r.textContent=t("selectDates"); }
 }
@@ -634,6 +697,16 @@ async function sendRequest(){
     alert(t("errNetwork"));
     btn.disabled = false; btn.textContent = t("send"); return;
   }
+  state.carResult = null;
+  if(state.pkg && state.pkg.on){
+    const car = S.byId(state.pkg.car);
+    try {
+      const rc = await fetch("/api/requests", { method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ listing:car.id, start:iso(start), end:iso(end), name, phone, email, lang, pickup: state.pkg.place,
+          total: car.price * state.nights, message: T.en.pkgNote(p.name) + (message ? " — " + message : "") }) });
+      state.carResult = rc.ok ? "sent" : "full";
+    } catch { state.carResult = "full"; }
+  }
   state.sent = { name, phone, email, message };
   showDone();
 }
@@ -642,14 +715,86 @@ function showDone(){
   const {p,start,end,guests,nights,total} = state, s = state.sent;
   const isCar = state.isCar, placeTxt = state.place === "airport" ? t("placeAirport") : t("placeFerizaj");
   const dates = isCar ? `${fmt(start)} → ${fmt(end)} (${H.plDays(nights)}), ${t("place")}: ${placeTxt}` : `${fmt(start)} → ${fmt(end)} (${pl(nights,"night")}), ${pl(guests,"guest")}`;
-  const msg = T[lang].waMsg(isCar ? H.carTitle(p) : title(p), dates, total, s.name, s.phone, s.email, s.message);
+  const carAdd = !isCar && state.pkg && state.pkg.on ? S.byId(state.pkg.car) : null;
+  const msg = T[lang].waMsg(isCar ? H.carTitle(p) : title(p), dates + (carAdd ? `\n🚗 ${H.carName(carAdd)} (${state.pkg.place === "airport" ? t("placeAirport") : t("placeFerizaj")})` : ""), total, s.name, s.phone, s.email, s.message);
   $("#form").classList.remove("open"); $("#reserve").style.display="none";
   $("#fine").style.display="none"; $("#breakdown").style.display="none";
   $("#done").classList.add("open");
   $("#done").innerHTML = `<div style="font-size:34px">✓</div><h3>${t("sentTitle")}</h3>
     <p>${fmt(start)} → ${fmt(end)} · ${isCar ? placeTxt : pl(guests,"guest")} · €${total}</p>
+    ${state.carResult ? `<p style="margin-top:8px">🚗 ${state.carResult === "sent" ? t("carSent") : t("carNotFree")}</p>` : ""}
     <p style="margin-top:8px">${t("sentText")}</p>
     <a class="wa" target="_blank" rel="noopener" href="https://wa.me/${HOST_WHATSAPP}?text=${encodeURIComponent(msg)}">${t("waBtn")}</a>`;
+}
+
+/* ===== Date search ===== */
+let search = null, searchResults = {};
+const todayIso = iso(new Date());
+if($("#sIn")){
+  $("#sIn").min = todayIso; $("#sOut").min = todayIso;
+  $("#sIn").onchange = () => { $("#sOut").min = $("#sIn").value || todayIso; if($("#sOut").value && $("#sOut").value <= $("#sIn").value) $("#sOut").value = ""; };
+  $("#search").onsubmit = async e => {
+    e.preventDefault();
+    const a = $("#sIn").value, b = $("#sOut").value;
+    if(!a || !b || b <= a){ alert(t("sErrDates")); return; }
+    search = { start: parse(a), end: parse(b), guests: +$("#sGuests").value };
+    searchResults = {};
+    await Promise.all(PROPERTIES.map(async p => {
+      const data = await fetch(`/api/availability/${p.id}`).then(r => r.ok ? r.json() : { blocked: [] }).catch(() => ({ blocked: [] }));
+      const free = !data.blocked.some(([s, e2]) => s < b && a < e2);
+      searchResults[p.id] = { free, fits: search.guests <= p.guests };
+    }));
+    decorateSearch();
+    $("#stays").scrollIntoView({ behavior: "smooth" });
+  };
+}
+function decorateSearch(){
+  const info = $("#searchInfo"); if(!info) return;
+  if(!search){ info.hidden = true; return; }
+  const nights = nightsBetween(search.start, search.end);
+  const ok = PROPERTIES.filter(p => searchResults[p.id]?.free && searchResults[p.id]?.fits);
+  info.hidden = false;
+  info.innerHTML = `<span>${ok.length ? T[lang].sFree(ok.length, PROPERTIES.length, `${fmt(search.start)} → ${fmt(search.end)} · ${pl(search.guests,"guest")}`) : t("sNone")}</span><button type="button" id="sClear">${t("sClear")}</button>`;
+  $("#sClear").onclick = () => { search = null; searchResults = {}; renderGrid(); };
+  for(const p of PROPERTIES){
+    const card = document.querySelector(`.card[data-id="${p.id}"]`), r = searchResults[p.id];
+    if(!card || !r) continue;
+    const good = r.free && r.fits;
+    card.classList.toggle("unavailable", !good);
+    card.querySelector(".avail")?.remove();
+    const badge = document.createElement("span");
+    badge.className = "avail " + (good ? "ok" : "no");
+    badge.textContent = !r.fits ? T[lang].avTooMany(p.guests) : r.free ? t("avOk") : t("avNo");
+    card.querySelector(".body h3").before(badge);
+    if(good){
+      const sp = S.stayPrice(p, nights);
+      const line = document.createElement("span"); line.className = "stay";
+      line.textContent = T[lang].stayTotal(sp.total, pl(nights,"night")) + (sp.disc ? ` (−${sp.pct}%)` : "");
+      card.querySelector(".price").append(line);
+    }
+  }
+}
+
+// availability of each car type for the stay dates (for "add a car")
+async function loadCarAvailability(){
+  if(state.carDays) return markFullCars();
+  state.carDays = {};
+  await Promise.all(S.CARS.map(async c => {
+    const data = await fetch(`/api/availability/${c.id}`).then(r => r.ok ? r.json() : { blocked: [] }).catch(() => ({ blocked: [] }));
+    state.carDays[c.id] = data.blocked;
+  }));
+  markFullCars();
+}
+function markFullCars(){
+  if(!state.carDays || !state.start || !state.end) return;
+  const a = iso(state.start), b = iso(state.end);
+  for(const c of S.CARS){
+    const full = (state.carDays[c.id] || []).some(([s, e]) => s < b && a < e);
+    state.pkg.full[c.id] = full;
+    const opt = document.querySelector(`#pkgCar option[value="${c.id}"]`);
+    if(opt) opt.textContent = `${H.carName(c)} — €${c.price} ${t("perDay")}${full ? ` (${t("pkgFull")})` : ""}`;
+  }
+  renderSummary();
 }
 
 /* ===== All photos ===== */

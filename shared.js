@@ -413,7 +413,49 @@ const CAR_T = {
         days:["Tag","Tage"], placeWord:"Übergabe" },
 };
 
-for (const l of Object.keys(CAR_T)) Object.assign(T[l], CAR_T[l]);   // car texts join the main translations
+for (const l of Object.keys(CAR_T)) Object.assign(T[l], CAR_T[l]);
+
+/* ===== Long-stay discounts and the "book direct" saving =====
+   LONG_STAY: biggest matching discount applies (apartments only).
+   AIRBNB_FEE_PCT: roughly what Airbnb adds in fees; used for the "you save about €X" estimate. */
+const LONG_STAY = [ { min: 28, pct: 20, key: "monthly" }, { min: 7, pct: 10, key: "weekly" } ];
+const AIRBNB_FEE_PCT = 20;
+function stayPrice(p, nights) {
+  const sub = p.price * nights;
+  const d = LONG_STAY.find(x => nights >= x.min);
+  const disc = d ? Math.round(sub * d.pct / 100) : 0;
+  const total = sub - disc + CLEANING_FEE;
+  return { sub, disc, pct: d ? d.pct : 0, key: d ? d.key : null, total, saving: Math.round(total * AIRBNB_FEE_PCT / 100) };
+}
+
+const FEAT_T = {
+  en: { sArrive:"Arrival", sLeave:"Departure", sBtn:"Search", sClear:"Clear search", sErrDates:"Please choose your arrival and departure dates.",
+        sFree:(n, all, d) => `${n} of ${all} apartments free · ${d}`, sNone:"No apartment is free for these dates — message us on WhatsApp, we often find a solution.",
+        avOk:"Available", avNo:"Booked for these dates", avTooMany:n => `Max. ${n} guests`, stayTotal:(tot, n) => `€${tot} total for ${n}`,
+        directBadge:"No booking fees", cardSave:"Up to 20% cheaper than on Airbnb", directLine:"Book direct: no platform fees — Airbnb adds up to ~20%.",
+        saveVs:x => `You save about €${x} compared with Airbnb`, weekly:p => `Weekly discount (−${p}%)`, monthly:p => `Monthly discount (−${p}%)`,
+        longHint:"−10% from 7 nights · −20% from 28 nights. Longer stay or a big family?", askWa:"Ask us on WhatsApp",
+        addCar:"Add a car for your stay", pkgCar:"Car", pkgFull:"booked", carLine:(name, n) => `${name} · ${n}`, totalWithCar:"Total incl. car",
+        carSent:"Car request sent too.", carNotFree:"The car you chose isn't free for these dates — we'll suggest another one on WhatsApp.", pkgNote:apt => `Package with stay at ${apt}` },
+  sq: { sArrive:"Mbërritja", sLeave:"Largimi", sBtn:"Kërko", sClear:"Pastro kërkimin", sErrDates:"Ju lutemi zgjidhni datat e mbërritjes dhe të largimit.",
+        sFree:(n, all, d) => `${n} nga ${all} apartamente të lira · ${d}`, sNone:"Asnjë apartament nuk është i lirë për këto data – na shkruani në WhatsApp, shpesh gjejmë zgjidhje.",
+        avOk:"I lirë", avNo:"I zënë për këto data", avTooMany:n => `Maks. ${n} mysafirë`, stayTotal:(tot, n) => `€${tot} gjithsej për ${n}`,
+        directBadge:"Pa tarifa rezervimi", cardSave:"Deri në 20% më lirë se në Airbnb", directLine:"Rezervim direkt: pa tarifa platforme – Airbnb shton deri në ~20%.",
+        saveVs:x => `Kurseni rreth €${x} krahasuar me Airbnb`, weekly:p => `Zbritje javore (−${p}%)`, monthly:p => `Zbritje mujore (−${p}%)`,
+        longHint:"−10% nga 7 netë · −20% nga 28 netë. Qëndrim më i gjatë apo familje e madhe?", askWa:"Na pyetni në WhatsApp",
+        addCar:"Shtoni një makinë për qëndrimin", pkgCar:"Makina", pkgFull:"e zënë", carLine:(name, n) => `${name} · ${n}`, totalWithCar:"Gjithsej me makinë",
+        carSent:"U dërgua edhe kërkesa për makinë.", carNotFree:"Makina që zgjodhët nuk është e lirë për këto data – do t'ju propozojmë një tjetër në WhatsApp.", pkgNote:apt => `Paketë me qëndrim në ${apt}` },
+  de: { sArrive:"Anreise", sLeave:"Abreise", sBtn:"Suchen", sClear:"Suche zurücksetzen", sErrDates:"Bitte wählen Sie An- und Abreisedatum.",
+        sFree:(n, all, d) => `${n} von ${all} Wohnungen frei · ${d}`, sNone:"Für diese Daten ist keine Wohnung frei – schreiben Sie uns auf WhatsApp, oft finden wir eine Lösung.",
+        avOk:"Frei", avNo:"Für diese Daten belegt", avTooMany:n => `Max. ${n} Gäste`, stayTotal:(tot, n) => `€${tot} gesamt für ${n}`,
+        directBadge:"Keine Buchungsgebühren", cardSave:"Bis zu 20 % günstiger als bei Airbnb", directLine:"Direkt buchen: keine Plattformgebühren – Airbnb schlägt bis zu ~20 % auf.",
+        saveVs:x => `Sie sparen ca. €${x} gegenüber Airbnb`, weekly:p => `Wochenrabatt (−${p} %)`, monthly:p => `Monatsrabatt (−${p} %)`,
+        longHint:"−10 % ab 7 Nächten · −20 % ab 28 Nächten. Längerer Aufenthalt oder große Familie?", askWa:"Auf WhatsApp fragen",
+        addCar:"Mietwagen für Ihren Aufenthalt dazubuchen", pkgCar:"Auto", pkgFull:"belegt", carLine:(name, n) => `${name} · ${n}`, totalWithCar:"Gesamt inkl. Auto",
+        carSent:"Die Anfrage für das Auto wurde ebenfalls gesendet.", carNotFree:"Das gewählte Auto ist für diese Daten nicht frei – wir schlagen Ihnen per WhatsApp ein anderes vor.", pkgNote:apt => `Paket mit Aufenthalt in ${apt}` },
+};
+
+for (const l of Object.keys(FEAT_T)) Object.assign(T[l], FEAT_T[l]);   // car texts join the main translations
 
 const LANGS = ["sq","de","en"];
 const LOCALE = { sq:"sq-AL", de:"de-DE", en:"en-GB" };
@@ -449,7 +491,7 @@ function make(lang) {
         <div class="eyebrow">${facts(p)}</div>
         <h3>${esc(p.name)} <span>— ${esc(tr(p.subtitle))}</span></h3>
         <div class="row">
-          <span class="price"><b>€${p.price}</b> ${t("perNight")} · ★ ${num(p.rating)} (${p.reviews})</span>
+          <span class="price"><b>€${p.price}</b> ${t("perNight")} · ★ ${num(p.rating)} (${p.reviews})<em class="savetag">${t("cardSave")}</em></span>
           <span class="more"><i></i>${t("viewApt")}</span>
         </div>
       </div>
@@ -479,6 +521,7 @@ function make(lang) {
 
       <aside class="book">
         <div class="p">€${p.price} <small>${t("perNight")}</small></div>
+        <div class="direct">✓ ${t("directLine")}</div>
         <div class="dates">
           <button id="inBtn"><label>${t("checkin")}</label><span id="inTxt">${t("addDate")}</span></button>
           <button id="outBtn"><label>${t("checkout")}</label><span id="outTxt">${t("addDate")}</span></button>
@@ -486,6 +529,11 @@ function make(lang) {
         <div class="cal" id="cal"></div>
         <div class="guests"><div><b>${t("guestsLbl")}</b><div class="meta" style="margin:0">${t("max")} ${p.guests}</div></div>
           <div class="step"><button id="gMinus" aria-label="−">−</button><span id="gNum">1</span><button id="gPlus" aria-label="+">+</button></div></div>
+        <label class="addcar"><input type="checkbox" id="pkgOn"> <span>🚗 ${t("addCar")}</span></label>
+        <div class="pkg" id="pkg" hidden>
+          <label><b>${t("pkgCar")}</b><select id="pkgCar">${CARS.map(c => `<option value="${c.id}">${esc(tr(c.name))} — €${c.price} ${t("perDay")}</option>`).join("")}</select></label>
+          <label><b>${t("place")}</b><select id="pkgPlace"><option value="ferizaj">${t("placeFerizaj")}</option><option value="airport">${t("placeAirport")}</option></select></label>
+        </div>
         <div class="breakdown" id="breakdown"></div>
         <button class="btn" id="reserve" disabled>${t("selectDates")}</button>
         <div class="form" id="form">
@@ -497,6 +545,7 @@ function make(lang) {
         </div>
         <div class="done" id="done"></div>
         <div class="fine" id="fine">${t("fine")}</div>
+        <div class="longhint">${t("longHint")} <a href="https://wa.me/${HOST_WHATSAPP}" target="_blank" rel="noopener">${t("askWa")} ↗</a></div>
       </aside>
     </div>`;
 
@@ -592,7 +641,7 @@ function make(lang) {
   return { lang, t, tr, num, pl, title, facts, url, cardHTML, detailHTML, guideHTML, carName, carTitle, plDays, carCardHTML, carDetailHTML };
 }
 
-const SHARED = { CARS, CAR_FEATURES, ITEMS, GUIDE, DEPOSIT_PCT, MAPS_ON, small, HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
+const SHARED = { stayPrice, LONG_STAY, AIRBNB_FEE_PCT, CARS, CAR_FEATURES, ITEMS, GUIDE, DEPOSIT_PCT, MAPS_ON, small, HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
 if (typeof module !== "undefined" && module.exports) module.exports = SHARED;
 else root.SHARED = SHARED;
 
