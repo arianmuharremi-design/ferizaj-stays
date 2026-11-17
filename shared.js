@@ -236,6 +236,8 @@ const T = {
    Times are approximate driving times from Ferizaj. "q" is what the map button searches for. */
 const GUIDE = {
   slug: "things-to-do",
+  // top photo; null = no photo. Licence requires the credit line.
+  photo: { src: "/photos/guide/01.jpg", author: "ErzaRudi", licence: "CC BY-SA 4.0", licenceUrl: "https://creativecommons.org/licenses/by-sa/4.0/", source: "https://commons.wikimedia.org/wiki/File:Xhami_dhe_Kish%C3%AB_Orthodokse.jpg" },
   title: { en:"Things to do in Ferizaj & around", sq:"Çfarë të bëni në Ferizaj dhe rrethinë", de:"Ausflugstipps: Ferizaj & Umgebung" },
   lead: {
     en:"Our favourite places in town, in the mountains nearby and for day trips — tips from your hosts. Driving times are approximate.",
@@ -414,7 +416,10 @@ function make(lang) {
     </div>`;
 
   const guideHTML = () => `
-    <section class="guide-hero"><div class="wrap">
+    <section class="guide-hero${GUIDE.photo ? " has-photo" : ""}">${GUIDE.photo ? `
+      <img class="gh-img" src="${GUIDE.photo.src}" srcset="${small(GUIDE.photo.src)} 800w, ${GUIDE.photo.src} 1600w" sizes="100vw" alt="${esc(tr(GUIDE.sections[0].items[0].name))}" fetchpriority="high">
+      <div class="gh-credit">Photo: <a href="${GUIDE.photo.source}" target="_blank" rel="noopener">${GUIDE.photo.author}</a>, <a href="${GUIDE.photo.licenceUrl}" target="_blank" rel="noopener license">${GUIDE.photo.licence}</a>, Wikimedia Commons</div>` : ""}
+      <div class="wrap">
       <a class="back" href="/${lang}/">${t("backHome")}</a>
       <div class="eyebrow" style="margin-top:28px">${t("where2")}</div>
       <h1>${tr(GUIDE.title)}</h1>
