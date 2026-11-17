@@ -124,6 +124,7 @@ const PROPERTIES = [
 /* ===== Translations ===== */
 const T = {
   en: {
+    navGuide:"Things to do", guideTeaser:"Things to do in Ferizaj & around", guideTeaserText:"Mosque and church side by side, the Kaçanik Gorge, Brezovica, Prizren and more — our tips for your stay.", guideBtn:"See our tips", mapBtn:"Map", backHome:"← Apartments", guideCta:"Find your apartment",
     payTitle:"Payment & cancellation", payList:["No payment when you send a request.", "After we confirm, you pay a 30% deposit by bank transfer or Western Union — we send the details on WhatsApp.", "The rest (70%) is paid on arrival, in cash or by transfer.", "Cancellation (firm): full refund of the deposit up to 30 days before check-in, 50% between 30 and 7 days before, no refund in the last 7 days."],
     allPhotos:"Show all photos", close:"Close",
     mapTitle:"Where the apartments are", approxLoc:"Check-in details are sent after booking.", gmaps:"Open in Google Maps", mapLink:"View apartment",
@@ -159,6 +160,7 @@ const T = {
     n:{ night:["night","nights"], guest:["guest","guests"], bedroom:["bedroom","bedrooms"], bed:["bed","beds"], bath:["bath","baths"] },
   },
   sq: {
+    navGuide:"Çfarë të bëni", guideTeaser:"Çfarë të bëni në Ferizaj dhe rrethinë", guideTeaserText:"Xhamia dhe kisha krah për krah, Gryka e Kaçanikut, Brezovica, Prizreni e më shumë – këshillat tona për qëndrimin tuaj.", guideBtn:"Shikoni këshillat", mapBtn:"Harta", backHome:"← Apartamentet", guideCta:"Gjeni apartamentin tuaj",
     payTitle:"Pagesa & anulimi", payList:["Asnjë pagesë kur dërgoni kërkesën.", "Pas konfirmimit paguani 30% kapar me transfer bankar ose Western Union – detajet jua dërgojmë në WhatsApp.", "Pjesa tjetër (70%) paguhet në mbërritje, me para në dorë ose me transfer.", "Anulimi: kapari kthehet plotësisht deri 30 ditë para hyrjes, 50% nga 30 deri 7 ditë para, pa kthim në 7 ditët e fundit."],
     allPhotos:"Shiko të gjitha fotot", close:"Mbyll",
     mapTitle:"Ku ndodhen apartamentet", approxLoc:"Detajet e hyrjes ju dërgohen pas rezervimit.", gmaps:"Hape në Google Maps", mapLink:"Shiko apartamentin",
@@ -194,6 +196,7 @@ const T = {
     n:{ night:["natë","netë"], guest:["mysafir","mysafirë"], bedroom:["dhomë gjumi","dhoma gjumi"], bed:["shtrat","shtretër"], bath:["banjo","banjo"] },
   },
   de: {
+    navGuide:"Ausflugstipps", guideTeaser:"Ausflugstipps: Ferizaj & Umgebung", guideTeaserText:"Moschee und Kirche Seite an Seite, die Kaçanik-Schlucht, Brezovica, Prizren und mehr – unsere Tipps für Ihren Aufenthalt.", guideBtn:"Zu den Tipps", mapBtn:"Karte", backHome:"← Wohnungen", guideCta:"Wohnung finden",
     payTitle:"Zahlung & Stornierung", payList:["Bei der Anfrage zahlen Sie nichts.", "Nach unserer Bestätigung zahlen Sie 30 % an – per Banküberweisung oder Western Union. Die Daten schicken wir Ihnen per WhatsApp.", "Der Rest (70 %) wird bei Ankunft bezahlt, bar oder per Überweisung.", "Stornierung: volle Rückerstattung der Anzahlung bis 30 Tage vor Anreise, 50 % zwischen 30 und 7 Tagen vorher, danach keine Rückerstattung."],
     allPhotos:"Alle Fotos anzeigen", close:"Schließen",
     mapTitle:"Wo die Wohnungen liegen", approxLoc:"Die Check-in-Infos erhalten Sie nach der Buchung.", gmaps:"In Google Maps öffnen", mapLink:"Wohnung ansehen",
@@ -229,6 +232,103 @@ const T = {
     n:{ night:["Nacht","Nächte"], guest:["Gast","Gäste"], bedroom:["Schlafzimmer","Schlafzimmer"], bed:["Bett","Betten"], bath:["Bad","Bäder"] },
   },
 };
+/* ===== "Things to do in Ferizaj & around" guide =====
+   Times are approximate driving times from Ferizaj. "q" is what the map button searches for. */
+const GUIDE = {
+  slug: "things-to-do",
+  title: { en:"Things to do in Ferizaj & around", sq:"Çfarë të bëni në Ferizaj dhe rrethinë", de:"Ausflugstipps: Ferizaj & Umgebung" },
+  lead: {
+    en:"Our favourite places in town, in the mountains nearby and for day trips — tips from your hosts. Driving times are approximate.",
+    sq:"Vendet tona të preferuara në qytet, në malet përreth dhe për udhëtime njëditore – këshilla nga mikpritësit tuaj. Kohët e udhëtimit janë të përafërta.",
+    de:"Unsere Lieblingsorte in der Stadt, in den Bergen ringsum und für Tagesausflüge – Tipps von Ihren Gastgebern. Die Fahrzeiten sind ungefähre Angaben.",
+  },
+  metaDesc: {
+    en:"Things to do in Ferizaj, Kosovo and nearby: mosque and church side by side, Nerodime river bifurcation, Kaçanik Gorge, Brezovica, Prizren, Prishtina and airports.",
+    sq:"Çfarë të bëni në Ferizaj dhe afër: xhamia dhe kisha krah për krah, bifurkacioni i Nerodimes, Gryka e Kaçanikut, Brezovica, Prizreni, Prishtina dhe aeroportet.",
+    de:"Ausflugstipps für Ferizaj und Umgebung: Moschee und Kirche Seite an Seite, Flussgabelung der Nerodime, Kaçanik-Schlucht, Brezovica, Prizren, Prishtina und Flughäfen.",
+  },
+  sections: [
+    { title: { en:"In Ferizaj", sq:"Në Ferizaj", de:"In Ferizaj" }, items: [
+      { name: { en:"Mosque and church side by side", sq:"Xhamia dhe kisha krah për krah", de:"Moschee und Kirche Seite an Seite" },
+        time: { en:"Town centre", sq:"Qendra e qytetit", de:"Stadtzentrum" }, q:"Xhamia e Madhe Ferizaj",
+        text: { en:"In the town centre, the Great Mosque and the Orthodox Church of St. Uroš stand right next to each other — a well-known symbol of Ferizaj, about 300 m from the train station.",
+                sq:"Në qendër të qytetit, Xhamia e Madhe dhe Kisha Ortodokse e Shën Uroshit qëndrojnë njëra pranë tjetrës – një simbol i njohur i Ferizajt, rreth 300 m nga stacioni i trenit.",
+                de:"Im Stadtzentrum stehen die Große Moschee und die orthodoxe Kirche des Hl. Uroš direkt nebeneinander – ein bekanntes Wahrzeichen von Ferizaj, etwa 300 m vom Bahnhof." } },
+      { name: { en:"The Village Shopping & Fun", sq:"The Village Shopping & Fun", de:"The Village Shopping & Fun" },
+        time: { en:"Town centre", sq:"Qendra e qytetit", de:"Stadtzentrum" }, q:"The Village Shopping & Fun Ferizaj",
+        text: { en:"Shopping centre on Ahmet Kaçiku street with shops, cafés and restaurants — handy for groceries and a coffee.",
+                sq:"Qendër tregtare në rrugën Ahmet Kaçiku me dyqane, kafene dhe restorante – e përshtatshme për pazar dhe një kafe.",
+                de:"Einkaufszentrum an der Ahmet-Kaçiku-Straße mit Geschäften, Cafés und Restaurants – praktisch für Einkäufe und einen Kaffee." } },
+      { name: { en:"Cafés and evening walks", sq:"Kafene dhe shëtitje mbrëmjeve", de:"Cafés und Abendspaziergang" },
+        time: { en:"Town centre", sq:"Qendra e qytetit", de:"Stadtzentrum" }, q:"Ferizaj city centre",
+        text: { en:"Ferizaj is a young, lively town. On summer evenings the streets around the centre fill up with people and the cafés stay busy until late.",
+                sq:"Ferizaji është qytet i ri dhe plot jetë. Në mbrëmjet e verës rrugët rreth qendrës mbushen me njerëz dhe kafenetë punojnë deri vonë.",
+                de:"Ferizaj ist eine junge, lebendige Stadt. An Sommerabenden sind die Straßen rund ums Zentrum voller Menschen und die Cafés bis spät geöffnet." } },
+    ]},
+    { title: { en:"Nature nearby", sq:"Natyra përreth", de:"Natur in der Nähe" }, items: [
+      { name: { en:"Nerodime river bifurcation", sq:"Bifurkacioni i Nerodimes", de:"Flussgabelung der Nerodime" },
+        time: { en:"Edge of town", sq:"Në dalje të qytetit", de:"Am Stadtrand" }, q:"Bifurkacioni i Nerodimes",
+        text: { en:"A protected nature reserve where the Nerodime river splits in two: one branch flows towards the Black Sea, the other towards the Aegean — a rare natural phenomenon. How much water flows depends on the season.",
+                sq:"Rezervat natyror i mbrojtur ku lumi Nerodime ndahet në dy degë: njëra rrjedh drejt Detit të Zi, tjetra drejt Detit Egje – një dukuri e rrallë natyrore. Sasia e ujit varet nga stina.",
+                de:"Ein geschütztes Naturreservat, in dem sich die Nerodime teilt: Ein Arm fließt Richtung Schwarzes Meer, der andere Richtung Ägäis – ein seltenes Naturphänomen. Die Wassermenge hängt von der Jahreszeit ab." } },
+      { name: { en:"Kaçanik Gorge", sq:"Gryka e Kaçanikut", de:"Kaçanik-Schlucht" },
+        time: { en:"About 20 min", sq:"Rreth 20 min", de:"Ca. 20 Min." }, q:"Gryka e Kaçanikut",
+        text: { en:"A dramatic gorge where the road and railway cut through the mountains towards North Macedonia — a scenic drive with short hikes and birdwatching.",
+                sq:"Grykë mbresëlënëse ku rruga dhe hekurudha kalojnë mes maleve drejt Maqedonisë së Veriut – udhëtim piktoresk, me shëtitje të shkurtra dhe vëzhgim zogjsh.",
+                de:"Eine eindrucksvolle Schlucht, durch die Straße und Bahn Richtung Nordmazedonien führen – schöne Fahrt mit kurzen Wanderungen und Vogelbeobachtung." } },
+      { name: { en:"Jezerc mountain village", sq:"Fshati malor Jezerc", de:"Bergdorf Jezerc" },
+        time: { en:"About 30 min", sq:"Rreth 30 min", de:"Ca. 30 Min." }, q:"Jezerc Ferizaj",
+        text: { en:"A village in the mountains above Ferizaj at more than 1,200 m — fresh air, forest walks and views over the plain.",
+                sq:"Fshat në malet mbi Ferizaj, mbi 1.200 m lartësi – ajër i pastër, shëtitje në pyll dhe pamje mbi rrafsh.",
+                de:"Ein Dorf in den Bergen über Ferizaj auf über 1.200 m – frische Luft, Waldspaziergänge und Blick über die Ebene." } },
+      { name: { en:"Brezovica ski resort", sq:"Qendra e skijimit Brezovica", de:"Skigebiet Brezovica" },
+        time: { en:"45–60 min", sq:"45–60 min", de:"45–60 Min." }, q:"Brezovica ski resort",
+        text: { en:"Kosovo's best-known ski resort, in the Sharr mountains: skiing in winter, hiking and mountain air in summer.",
+                sq:"Qendra më e njohur e skijimit në Kosovë, në malet e Sharrit: skijim në dimër, ecje dhe ajër malor në verë.",
+                de:"Das bekannteste Skigebiet des Kosovo im Šar-Gebirge: im Winter Skifahren, im Sommer Wandern und Bergluft." } },
+    ]},
+    { title: { en:"Day trips", sq:"Udhëtime njëditore", de:"Tagesausflüge" }, items: [
+      { name: { en:"Prishtina", sq:"Prishtina", de:"Prishtina" },
+        time: { en:"About 40 min", sq:"Rreth 40 min", de:"Ca. 40 Min." }, q:"NEWBORN monument Prishtina",
+        text: { en:"Kosovo's capital: the NEWBORN monument, the striking National Library, Mother Teresa Boulevard and plenty of cafés.",
+                sq:"Kryeqyteti i Kosovës: monumenti NEWBORN, Biblioteka Kombëtare me arkitekturë të veçantë, Bulevardi Nëna Terezë dhe shumë kafene.",
+                de:"Die Hauptstadt des Kosovo: das NEWBORN-Denkmal, die markante Nationalbibliothek, der Mutter-Teresa-Boulevard und viele Cafés." } },
+      { name: { en:"Gadime Marble Cave", sq:"Shpella e Gadimes", de:"Marmorhöhle Gadime" },
+        time: { en:"About 30 min", sq:"Rreth 30 min", de:"Ca. 30 Min." }, q:"Shpella e Gadimes",
+        text: { en:"A marble cave near Lipjan with crystal formations, visited with a guide.",
+                sq:"Shpellë mermeri afër Lipjanit me formacione kristalore, që vizitohet me guidë.",
+                de:"Eine Marmorhöhle bei Lipjan mit Kristallformationen, Besichtigung mit Führung." } },
+      { name: { en:"Prizren", sq:"Prizreni", de:"Prizren" },
+        time: { en:"About 1 h", sq:"Rreth 1 orë", de:"Ca. 1 Std." }, q:"Prizren old town",
+        text: { en:"Kosovo's most beautiful old town: the Stone Bridge, Sinan Pasha Mosque and the fortress with views over the city. In August: the DokuFest film festival.",
+                sq:"Qyteti i vjetër më i bukur i Kosovës: Ura e Gurit, Xhamia e Sinan Pashës dhe Kalaja me pamje mbi qytet. Në gusht: festivali i filmit DokuFest.",
+                de:"Die schönste Altstadt des Kosovo: die Steinbrücke, die Sinan-Pascha-Moschee und die Festung mit Blick über die Stadt. Im August: das Filmfestival DokuFest." } },
+      { name: { en:"Skopje", sq:"Shkupi", de:"Skopje" },
+        time: { en:"About 1 h", sq:"Rreth 1 orë", de:"Ca. 1 Std." }, q:"Old Bazaar Skopje",
+        text: { en:"Capital of North Macedonia, with its Old Bazaar and Stone Bridge. Take your passport or ID card for the border.",
+                sq:"Kryeqyteti i Maqedonisë së Veriut, me Çarshinë e Vjetër dhe Urën e Gurit. Merrni pasaportën ose letërnjoftimin për kufirin.",
+                de:"Hauptstadt Nordmazedoniens mit Altem Basar und Steinbrücke. Reisepass oder Ausweis für die Grenze mitnehmen." } },
+    ]},
+    { title: { en:"Getting here", sq:"Si të vini", de:"Anreise" }, items: [
+      { name: { en:"Prishtina Airport (PRN)", sq:"Aeroporti i Prishtinës (PRN)", de:"Flughafen Prishtina (PRN)" },
+        time: { en:"About 45 min", sq:"Rreth 45 min", de:"Ca. 45 Min." }, q:"Prishtina International Airport Adem Jashari",
+        text: { en:"The closest airport, with many flights from Germany, Switzerland and Austria. Need a transfer? Ask us on WhatsApp.",
+                sq:"Aeroporti më i afërt, me shumë fluturime nga Gjermania, Zvicra dhe Austria. Ju duhet transport? Na shkruani në WhatsApp.",
+                de:"Der nächste Flughafen, mit vielen Flügen aus Deutschland, der Schweiz und Österreich. Transfer gewünscht? Schreiben Sie uns auf WhatsApp." } },
+      { name: { en:"Skopje Airport (SKP)", sq:"Aeroporti i Shkupit (SKP)", de:"Flughafen Skopje (SKP)" },
+        time: { en:"About 1 h 15 min", sq:"Rreth 1 orë e 15 min", de:"Ca. 1 Std. 15 Min." }, q:"Skopje International Airport",
+        text: { en:"A good alternative, often with low-cost flights. The drive includes the border crossing — take your passport or ID card.",
+                sq:"Alternativë e mirë, shpesh me fluturime të lira. Rruga përfshin kalimin e kufirit – merrni pasaportën ose letërnjoftimin.",
+                de:"Eine gute Alternative, oft mit günstigen Flügen. Die Fahrt führt über die Grenze – Reisepass oder Ausweis mitnehmen." } },
+      { name: { en:"By bus", sq:"Me autobus", de:"Mit dem Bus" },
+        time: { en:"Bus station in town", sq:"Stacioni në qytet", de:"Busbahnhof in der Stadt" }, q:"Stacioni i autobusëve Ferizaj",
+        text: { en:"Buses run from Ferizaj bus station to Prishtina, Prizren and Skopje.",
+                sq:"Nga stacioni i autobusëve në Ferizaj ka linja për Prishtinë, Prizren dhe Shkup.",
+                de:"Vom Busbahnhof Ferizaj fahren Busse nach Prishtina, Prizren und Skopje." } },
+    ]},
+  ],
+};
+
 const LANGS = ["sq","de","en"];
 const LOCALE = { sq:"sq-AL", de:"de-DE", en:"en-GB" };
 // Albanian month/day names are built in, because many browsers have no Albanian date data
@@ -313,10 +413,33 @@ function make(lang) {
       </aside>
     </div>`;
 
-  return { lang, t, tr, num, pl, title, facts, url, cardHTML, detailHTML };
+  const guideHTML = () => `
+    <section class="guide-hero"><div class="wrap">
+      <a class="back" href="/${lang}/">${t("backHome")}</a>
+      <div class="eyebrow" style="margin-top:28px">${t("where2")}</div>
+      <h1>${tr(GUIDE.title)}</h1>
+      <p>${tr(GUIDE.lead)}</p>
+    </div></section>
+    ${GUIDE.sections.map(sec => `
+    <section class="guide-sec"><div class="wrap">
+      <h2>${tr(sec.title)}</h2>
+      <div class="guide-grid">${sec.items.map(it => `
+        <article class="tip">
+          <div class="eyebrow">${tr(it.time)}</div>
+          <h3>${tr(it.name)}</h3>
+          <p>${tr(it.text)}</p>
+          <a class="maplink" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.q)}" target="_blank" rel="noopener">${t("mapBtn")} ↗</a>
+        </article>`).join("")}
+      </div>
+    </div></section>`).join("")}
+    <section class="guide-sec"><div class="wrap" style="text-align:center">
+      <a class="pill" href="/${lang}/#stays"><i></i>${t("guideCta")}</a>
+    </div></section>`;
+
+  return { lang, t, tr, num, pl, title, facts, url, cardHTML, detailHTML, guideHTML };
 }
 
-const SHARED = { DEPOSIT_PCT, MAPS_ON, small, HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
+const SHARED = { GUIDE, DEPOSIT_PCT, MAPS_ON, small, HOST_WHATSAPP, CLEANING_FEE, A, PROPERTIES, T, LANGS, LOCALE, SQ_MONTHS, SQ_MON_SHORT, SQ_DOWS, esc, bySlug, byId, make };
 if (typeof module !== "undefined" && module.exports) module.exports = SHARED;
 else root.SHARED = SHARED;
 

@@ -289,13 +289,14 @@ function preferredLang(req) {
   return "en";
 }
 
-function renderPage(lang, p) {
+function renderPage(lang, p, page = "home") {
+  const guide = page === "guide";
   const { esc, T, LANGS, PROPERTIES } = SHARED;
   const H = SHARED.make(lang);
-  const slug = p ? p.slug : "";
+  const slug = p ? p.slug : guide ? SHARED.GUIDE.slug : "";
   const pageUrl = `${PUBLIC_URL}/${lang}/${slug}`;
-  const title = p ? T[lang].aptTitle(p.name, H.tr(p.subtitle)) : H.t("pageTitle");
-  const desc = p ? clipText(H.tr(p.description)[0], 158) : H.t("metaDesc");
+  const title = p ? T[lang].aptTitle(p.name, H.tr(p.subtitle)) : guide ? `${H.tr(SHARED.GUIDE.title)} | Ferizaj Stays` : H.t("pageTitle");
+  const desc = p ? clipText(H.tr(p.description)[0], 158) : guide ? H.tr(SHARED.GUIDE.metaDesc) : H.t("metaDesc");
   const image = abs((p || PROPERTIES[0]).photos[0]);
   const prices = PROPERTIES.map(x => x.price);
   const business = {
@@ -322,7 +323,7 @@ function renderPage(lang, p) {
     `<meta name="description" content="${esc(desc)}">`,
     `<link rel="canonical" href="${pageUrl}">`,
     ...LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${PUBLIC_URL}/${l}/${slug}">`),
-    `<link rel="alternate" hreflang="x-default" href="${p ? `${PUBLIC_URL}/en/${slug}` : `${PUBLIC_URL}/`}">`,
+    `<link rel="alternate" hreflang="x-default" href="${slug ? `${PUBLIC_URL}/en/${slug}` : `${PUBLIC_URL}/`}">`,
     `<meta property="og:type" content="website">`,
     `<meta property="og:site_name" content="Ferizaj Stays">`,
     `<meta property="og:title" content="${esc(title)}">`,
@@ -349,6 +350,14 @@ function renderPage(lang, p) {
       (_, open, l) => `${open} href="/${l}/${slug}"${l === lang ? ' class="on"' : ""}>`)
     .replace('<a class="back" id="back" href="/"', `<a class="back" id="back" href="/${lang}/"`)
     .replace(/<a class="logo" href="\/">/g, `<a class="logo" href="/${lang}/">`);
+  // guide links in the menu, home teaser and footer point at this language
+  html = html.replace(/href="\/en\/things-to-do"/g, `href="/${lang}/${SHARED.GUIDE.slug}"`);
+  if (guide) html = html
+    // the guide replaces the home page sections; menu links go back to the home page
+    .replace(/<section class="hero" id="hero">[\s\S]*?(?=<footer)/, () => H.guideHTML() + "\n\n")
+    .replace('<header id="top">', '<header id="top" class="solid">')
+    .replace("<body>", '<body data-page="guide">')
+    .replace(/<nav>([\s\S]*?)<\/nav>/, n => n.replace(/href="#(\w+)"/g, `href="/${lang}/#$1"`));
   if (p) html = html
     // one main heading per page: on apartment pages that's the apartment's name
     .replace(/<h1 data-i18n="heroTitle">([^<]*)<\/h1>/, '<div class="hero-title" data-i18n="heroTitle">$1</div>')
@@ -361,7 +370,7 @@ function renderPage(lang, p) {
 
 function sitemap() {
   const { LANGS, PROPERTIES } = SHARED;
-  const pages = ["", ...PROPERTIES.map(p => p.slug)];
+  const pages = ["", ...PROPERTIES.map(p => p.slug), SHARED.GUIDE.slug];
   const urls = pages.flatMap(slug => LANGS.map(lang => [
     `<url><loc>${PUBLIC_URL}/${lang}/${slug}</loc>`,
     ...LANGS.map(l => `<xhtml:link rel="alternate" hreflang="${l}" href="${PUBLIC_URL}/${l}/${slug}"/>`),
@@ -393,6 +402,7 @@ http.createServer((req, res) => {
     if ((m = url.pathname.match(/^\/(sq|de|en)\/$/))) return send(res, 200, renderPage(m[1]), HTML, PAGE_CACHE);
     if ((m = url.pathname.match(/^\/(sq|de|en)\/([\w-]+)\/?$/))) {
       const p = SHARED.bySlug(m[2]);
+      if (m[2] === SHARED.GUIDE.slug) return url.pathname.endsWith("/") ? redirect(res, 301, `/${m[1]}/${m[2]}`) : send(res, 200, renderPage(m[1], null, "guide"), HTML, PAGE_CACHE);
       if (p) return url.pathname.endsWith("/") ? redirect(res, 301, `/${m[1]}/${p.slug}`) : send(res, 200, renderPage(m[1], p), HTML, PAGE_CACHE);
     }
     // our own photos (resized copies), cached by browsers for 30 days

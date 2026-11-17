@@ -103,6 +103,23 @@ header.solid .langs a.on{background:var(--ink);color:#fff}
 .fact b{display:block;font-family:var(--serif);font-weight:800;font-size:clamp(44px,5vw,64px);line-height:1}
 .fact span{display:block;color:var(--muted);font-size:14px;margin-top:8px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
 
+/* guide teaser + guide page */
+.teaser{padding:100px 0}
+.teaser-in{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap}
+.teaser p{color:var(--muted);font-size:17px;max-width:620px;margin-top:14px}
+.guide-hero{padding:120px 0 40px;background:var(--soft)}
+.guide-hero h1{font-size:clamp(36px,5.5vw,68px);margin-top:12px;max-width:900px}
+.guide-hero p{color:var(--muted);font-size:18px;max-width:680px;margin-top:16px}
+.guide-sec{padding:64px 0 8px}
+.guide-sec h2{font-size:clamp(26px,3vw,36px);margin-bottom:24px}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.tip{border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;display:flex;flex-direction:column;background:#fff}
+.tip h3{font-size:21px;margin-top:8px}
+.tip p{color:var(--muted);margin-top:10px;flex:1}
+.maplink{margin-top:14px;font-family:var(--sans);font-weight:600;color:var(--ink);text-decoration:none;align-self:flex-start;border-bottom:1px solid var(--line)}
+.maplink:hover{color:var(--accent);border-color:var(--accent)}
+body[data-page="guide"] footer{margin-top:80px}
+
 /* closing banner */
 .cta{position:relative;min-height:70vh;display:grid;place-items:center;overflow:hidden}
 .cta img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -261,7 +278,7 @@ footer a{color:#fff}
 <header id="top"><div class="wrap">
   <a class="logo" href="/">Ferizaj<span>Stays</span></a>
   <div class="right">
-    <nav><a href="#stays" data-i18n="navStays">Apartments</a><a href="#about" data-i18n="navAbout">About</a><a href="#contact" data-i18n="navContact">Contact</a></nav>
+    <nav><a href="#stays" data-i18n="navStays">Apartments</a><a href="#about" data-i18n="navAbout">About</a><a href="/en/things-to-do" id="navGuide" data-i18n="navGuide">Things to do</a><a href="#contact" data-i18n="navContact">Contact</a></nav>
     <a class="phone" href="https://wa.me/38349947897" target="_blank" rel="noopener" aria-label="WhatsApp +383 49 947 897"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.7a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.5-.3z"/></svg><span>+383 49 947 897</span></a>
     <div class="langs" id="langs" role="group" aria-label="Language">
       <a data-lang="sq" lang="sq" hreflang="sq" href="/sq/">SQ</a><a data-lang="de" lang="de" hreflang="de" href="/de/">DE</a><a data-lang="en" lang="en" hreflang="en" href="/en/">EN</a>
@@ -317,6 +334,15 @@ footer a{color:#fff}
   </div>
 </div></section>
 
+<section class="teaser"><div class="wrap teaser-in">
+  <div>
+    <div class="eyebrow" data-i18n="where2">Ferizaj · Kosovo</div>
+    <h2 class="section-title" data-i18n="guideTeaser">Things to do in Ferizaj &amp; around</h2>
+    <p data-i18n="guideTeaserText">Mosque and church side by side, the Kaçanik Gorge, Brezovica, Prizren and more — our tips for your stay.</p>
+  </div>
+  <a class="pill" id="guideBtn" href="/en/things-to-do"><i></i><span data-i18n="guideBtn">See our tips</span></a>
+</div></section>
+
 <section class="cta">
   <img src="/photos/intercon/07.jpg" alt="" loading="lazy">
   <a class="boxbtn" href="#stays" data-i18n="ctaBtn">Book your stay</a>
@@ -325,6 +351,7 @@ footer a{color:#fff}
 <footer id="contact"><div class="wrap">
   <a class="logo" href="/">Ferizaj<span>Stays</span></a>
   <span><span data-i18n="phone">WhatsApp / phone</span>: <a href="https://wa.me/38349947897">+383 49 947 897</a> · <a href="tel:+38344868916">+383 44 868 916</a></span>
+  <a id="footGuide" href="/en/things-to-do" data-i18n="navGuide">Things to do</a>
   <span>© 2026 Ferizaj Stays · Ferizaj, Kosovo</span>
 </div></footer>
 
@@ -368,8 +395,9 @@ const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y
 const fmt = d => lang==="sq" ? `${d.getDate()} ${SQ_MON_SHORT[d.getMonth()]}` : d.toLocaleDateString(LOCALE[lang],{day:"numeric",month:"short"});
 const monthTitle = d => lang==="sq" ? `${SQ_MONTHS[d.getMonth()]} ${d.getFullYear()}` : d.toLocaleDateString(LOCALE[lang],{month:"long",year:"numeric"});
 const nightsBetween = (a,b) => Math.round((b-a)/864e5);
-const pagePath = () => state && $("#detail").classList.contains("open") ? `/${lang}/${state.p.slug}` : `/${lang}/`;
-const pageTitle = () => state && $("#detail").classList.contains("open") ? T[lang].aptTitle(state.p.name, tr(state.p.subtitle)) : t("pageTitle");
+const PAGE = document.body.dataset.page || "home";   // "guide" on the things-to-do page
+const pagePath = () => PAGE === "guide" ? location.pathname : state && $("#detail").classList.contains("open") ? `/${lang}/${state.p.slug}` : `/${lang}/`;
+const pageTitle = () => PAGE === "guide" ? document.title : state && $("#detail").classList.contains("open") ? T[lang].aptTitle(state.p.name, tr(state.p.subtitle)) : t("pageTitle");
 
 /* ===== Language switch ===== */
 function applyLang(){
@@ -389,21 +417,23 @@ function applyLang(){
 function syncPage(replace = true){
   document.title = pageTitle();
   const slug = state && $("#detail").classList.contains("open") ? state.p.slug : "";
+  ["#navGuide", "#guideBtn", "#footGuide"].forEach(id => { const el = $(id); if(el) el.href = `/${lang}/${S.GUIDE.slug}`; });
   document.querySelectorAll("#langs a").forEach(a => {
     a.classList.toggle("on", a.dataset.lang === lang);
-    a.href = `/${a.dataset.lang}/${slug}`;
+    a.href = PAGE === "guide" ? `/${a.dataset.lang}/${S.GUIDE.slug}` : `/${a.dataset.lang}/${slug}`;
   });
   if(location.pathname !== pagePath()) history[replace ? "replaceState" : "pushState"](null, "", pagePath());
   setHeader();
 }
 // header is see-through over the big photo, white once you scroll or open an apartment
-function setHeader(){ $("#top").classList.toggle("solid", window.scrollY > 40 || $("#detail").classList.contains("open")); }
+function setHeader(){ $("#top").classList.toggle("solid", PAGE === "guide" || window.scrollY > 40 || $("#detail").classList.contains("open")); }
 addEventListener("scroll", setHeader, { passive: true });
 // menu links (#stays, #about, #contact) close an open apartment first, then scroll there
 document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", () => {
   if($("#detail").classList.contains("open")) closeDetail(true);
 }));
 document.querySelectorAll("#langs a").forEach(a => a.onclick = e => {
+  if(PAGE === "guide"){ document.cookie = `lang=${a.dataset.lang}; path=/; max-age=31536000; samesite=lax`; return; }   // guide pages are separate pages: just follow the link
   e.preventDefault();
   lang = a.dataset.lang;
   try { localStorage.setItem("lang", lang); } catch {}
@@ -413,6 +443,7 @@ document.querySelectorAll("#langs a").forEach(a => a.onclick = e => {
 
 /* ===== Listing grid ===== */
 function renderGrid(){
+  if(!$("#grid")) return;
   $("#grid").innerHTML = PROPERTIES.map(H.cardHTML).join("");
   document.querySelectorAll(".card[data-id]").forEach(c => c.onclick = e => {
     if(e.metaKey || e.ctrlKey || e.shiftKey) return;   // let "open in new tab" work
