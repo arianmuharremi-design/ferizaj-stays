@@ -433,7 +433,7 @@ http.createServer((req, res) => {
       if (p) return url.pathname.endsWith("/") ? redirect(res, 301, `/${m[1]}/${p.slug}`) : send(res, 200, renderPage(m[1], p), HTML, PAGE_CACHE);
     }
     // our own photos (resized copies), cached by browsers for 30 days
-    if ((m = url.pathname.match(/^\/photos\/([a-z-]+)\/(\d{2}(?:-sm)?\.jpg)$/))) {
+    if ((m = url.pathname.match(/^\/photos\/([a-z0-9-]+)\/(\d{2}(?:-sm)?\.jpg)$/))) {
       const file = path.join(ROOT, "photos", m[1], m[2]);
       if (fs.existsSync(file)) {
         res.writeHead(200, { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=2592000" });

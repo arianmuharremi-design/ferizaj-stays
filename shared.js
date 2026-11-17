@@ -358,7 +358,8 @@ const CARS = [
     seatsLabel: "seats5",
     description: GOLF_TEXT,
     features: ["automatic", "seats5", "three", "ferizaj", "airport"],
-    photos: [],   // add "/photos/golf-7/01.jpg" etc. once you have photos of your own car
+    photos: ["/photos/golf-7/01.jpg"],   // example photo from Unsplash; replace with your own car
+    example: true,
     photoCredit: null,
   },
   {
@@ -368,7 +369,8 @@ const CARS = [
     seatsLabel: "seats5",
     description: GOLF_TEXT,
     features: ["automatic", "seats5", "three", "ferizaj", "airport"],
-    photos: [],   // add "/photos/golf-6/01.jpg" etc. once you have photos of your own car
+    photos: ["/photos/golf-6/01.jpg"],   // example photo from Unsplash; replace with your own car
+    example: true,
     photoCredit: null,
   },
   {
@@ -382,7 +384,8 @@ const CARS = [
       de:"Platz für 8–9 Personen samt Gepäck – ideal für Familien, Flughafenfahrten und Ausflüge nach Prizren oder Brezovica.",
     },
     features: ["seats9", "luggage", "ferizaj", "airport"],
-    photos: [],   // add "/photos/family-van/01.jpg" etc. once you have photos of your own car
+    photos: ["/photos/family-van/01.jpg"],   // example photo from Unsplash; replace with your own car
+    example: true,
     photoCredit: null,
   },
 ];
@@ -589,7 +592,7 @@ function make(lang) {
   const carCardHTML = c => `
     <a class="card carcard" href="${url(c)}" data-id="${c.id}">
       <div class="imgwrap">${carPhoto(c, "img")}
-        ${c.photoCredit ? `<span class="examplebadge">${t("example")}</span>` : ""}</div>
+        ${c.example || c.photoCredit ? `<span class="examplebadge">${t("example")}</span>` : ""}</div>
       <div class="body">
         <div class="eyebrow">${c.features.slice(0, c.units > 1 ? 3 : 2).map(f => tr(CAR_FEATURES[f])).join(" · ")}</div>
         <h3>${esc(carName(c))} <span>— ${esc(tr(c.subtitle))}</span></h3>
@@ -604,7 +607,7 @@ function make(lang) {
   const carDetailHTML = c => `
     <h1>${esc(carTitle(c))}</h1>
     <div class="meta">${t("carType")} · Ferizaj, Kosovo</div>
-    <div class="carhero">${c.photos.length ? `<img src="${c.photos[0]}" alt="${esc(carTitle(c))}">` : carPhoto(c, "big")}${c.photoCredit ? `<span class="examplebadge">${t("example")}</span>` : ""}</div>
+    <div class="carhero">${c.photos.length ? `<img src="${c.photos[0]}" alt="${esc(carTitle(c))}">` : carPhoto(c, "big")}${c.example || c.photoCredit ? `<span class="examplebadge">${t("example")}</span>` : ""}</div>
     ${c.photoCredit ? `<div class="credit">${credit(c)}</div>` : ""}
     <div class="layout">
       <div>
